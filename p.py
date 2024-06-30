@@ -12,6 +12,7 @@ from plotly.subplots import make_subplots
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import scipy.optimize
+from sklearn.preprocessing import OneHotEncoder
 from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import train_test_split
@@ -23,6 +24,7 @@ from sklearn.compose import ColumnTransformer
 catimputer = SimpleImputer(strategy='most_frequent')
 numimputer = SimpleImputer(strategy='median')
 
+ohe = OneHotEncoder(drop='first',sparse=False,dtype=np.int32)
 
 def scatter_plot(df,column1,column2="Diagnosis"):
     fig = px.scatter(
@@ -111,6 +113,20 @@ def t_test(df,x,y):
 
 def info(df):
     return df.info()
+
+
+def oneHotEncoding(df,numcols,catcols):
+    # Identify string columns
+    string_columns = df.select_dtypes(include=['object']).columns.tolist()
+    newlist = []
+    for col in  string_columns:
+        if col in numcols:
+            newlist.append(col)
+            
+    newdf = df.drop(columns = newlist)
+    newdf = ohe.fit_transform(newdf[catcols])
+    return newdf
+    
     
 def testcoorelationship(df,cols ,target):
     mostsignificant = []
@@ -456,11 +472,11 @@ def minmaxscaling(df,target = 'Diagnosis'):
     # X_test_scaled_n = pd.concat([X_test_scaled,X_test_cat],axis=1)
     return X_train_scaled,X_test_scaled,y_train,y_test
     
-def getClassificationReport(df):    
+def getClassificationReport(df,target):    
     
-    df_resamp = oversampling(df,"Diagnosis")
-    print(df_resamp['Diagnosis'].value_counts())    
-    X_train_scaled,X_test_scaled,y_train,y_test = minmaxscaling(df_resamp,target='Diagnosis')    
+    # df_resamp = oversampling(df,target)
+    # print(df_resamp[target].value_counts())    
+    X_train_scaled,X_test_scaled,y_train,y_test = minmaxscaling(df,target=target)    
     clf = RandomForestClassifier(n_estimators=100, random_state=42)
     clf.fit(X_train_scaled, y_train)
     y_pred = clf.predict(X_test_scaled)

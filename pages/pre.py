@@ -22,7 +22,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-from p import applyimputation,testcoorelationship,getAllViolinPlots,remove_singlevariate_outliers
+from p import applyimputation,testcoorelationship,getAllViolinPlots,remove_singlevariate_outliers,oneHotEncoding
 from p import info,getallcatfig,describe_column,getallconfigs,gettopnfeatures,violin_plot,oversampling,getClassificationReport
 
 # initial config
@@ -32,6 +32,12 @@ nooutlierdf = pd.DataFrame()
 # target = st.session_state.target
 kdf = pd.read_csv("kidney.csv")
 target = "Diagnosis"
+
+datetime_columns = kdf.select_dtypes(include=[pd.DatetimeTZDtype, 'datetime']).columns
+
+# Remove datetime columns
+kdf = kdf.drop(columns=datetime_columns)
+
 
 if target == 'Diagnosis':
     kdf.drop(columns = ['PatientID', 'DoctorInCharge'], inplace = True)
@@ -66,7 +72,15 @@ with st.container(border=True):
     st.text("After Imputation percentage of null values")
     st.dataframe(newreport)
     
-st.write("2nd Step : visualizing each column and its mathematical summary")   
+    
+st.write("2nd Step : ONE_HOT_ENCODING")       
+with st.container(border=True):
+    st.write(f"Machine learning algorithms generally work better with numerical input rather than categorical data. One-hot encoding converts categorical variables into a format that can be used by these algorithms.By dropping the first category, we prevent multicollinearity in our model.Using dtype=np.int32 reduces the memory usage")
+    imputeddf = oneHotEncoding(df=imputeddf,numcols=num_cols,catcols=cat_cols)
+    st.dataframe(imputeddf.head())
+
+    
+st.write("3rd Step : visualizing each column and its mathematical summary")   
 
 with st.expander(" Click to show plots"):
     catfigures = getallcatfig(kdf,cat_cols=cat_cols,target=target)
@@ -126,9 +140,9 @@ with st.container(border=True):
     st.write(' ')
     hui = totalcols
     hui.remove(target)
-    print("hui",type(totalcols))
+    # print("hui",type(totalcols))
     nooutlierdf = remove_singlevariate_outliers(df=imputeddf,columns=hui)
-    print(nooutlierdf.shape)
+    # print(nooutlierdf.shape)
     # st.write("*********Using Mahalanobis  distance to remove multivariate outliers**********")
     # st.write("Mahalanobis distance is a statistical technique used to identify and remove outliers in multivariate data (data with multiple variables)")
     # st.image("https://miro.medium.com/v2/resize:fit:1400/1*Zj_jFn6SfDPwmasUBCAR1A.png")
@@ -144,14 +158,14 @@ with st.container(border=True):
 with st.container(border=True):
     st.subheader("SMOTE",anchor=False)
     
-    info = kdf["Diagnosis"].value_counts()
+    info = nooutlierdf[target].value_counts()
     st.write("*SMOTE is an oversampling technique that creates synthetic samples of the minority class by interpolating between existing minority class instances.The goal of SMOTE is to balance the class distribution by generating synthetic examples rather than by duplicating existing ones, which helps prevent overfitting.*")     
     st.write("__Before oversampling__")
        
     st.dataframe(info) 
-    oversampldf = oversampling(df=kdf,target='Diagnosis')
+    nooutlierdf = oversampling(df=nooutlierdf,target=target)
     st.write("__After Oversampling__")
-    newinfo = oversampldf['Diagnosis'].value_counts()
+    newinfo = nooutlierdf[target].value_counts()
     st.dataframe(newinfo) 
     
 with st.container(border=True):
@@ -159,7 +173,7 @@ with st.container(border=True):
     st.write("*Min-max scaling, also known as min-max normalization, transforms numerical features to a common scale, typically [0, 1]. It rescales features by shifting and scaling values to a specified range, where the minimum value of the feature becomes 0 and the maximum value becomes . Min-max scaling preserves the original distribution and relationships between data points.*") 
     st.text(" ")
     st.write("__Classification Report after Training a Random Forest Model__")   
-    report = getClassificationReport(df=kdf)
+    report = getClassificationReport(df=nooutlierdf)
     csv_file = StringIO(report)
     # Convert the string to a DataFrame
     reportdf = pd.read_csv(csv_file)
