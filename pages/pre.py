@@ -30,7 +30,7 @@ imputeddf = pd.DataFrame()
 nooutlierdf = pd.DataFrame()
 # kdf = st.session_state.df
 # target = st.session_state.target
-kdf = pd.read_csv("kidney.csv")
+kdf = pd.read_csv("data.csv")
 target = "Diagnosis"
 
 datetime_columns = kdf.select_dtypes(include=[pd.DatetimeTZDtype, 'datetime']).columns
@@ -39,8 +39,8 @@ datetime_columns = kdf.select_dtypes(include=[pd.DatetimeTZDtype, 'datetime']).c
 kdf = kdf.drop(columns=datetime_columns)
 
 
-if target == 'Diagnosis':
-    kdf.drop(columns = ['PatientID', 'DoctorInCharge'], inplace = True)
+# if target == 'Diagnosis':
+#     kdf.drop(columns = ['PatientID', 'DoctorInCharge'], inplace = True)
     
     
 cat_cols = [col for col in kdf.columns if kdf[col].nunique() < 10]
@@ -72,14 +72,7 @@ with st.container(border=True):
     st.text("After Imputation percentage of null values")
     st.dataframe(newreport)
     
-    
-st.write("2nd Step : ONE_HOT_ENCODING")       
-with st.container(border=True):
-    st.write(f"Machine learning algorithms generally work better with numerical input rather than categorical data. One-hot encoding converts categorical variables into a format that can be used by these algorithms.By dropping the first category, we prevent multicollinearity in our model.Using dtype=np.int32 reduces the memory usage")
-    imputeddf = oneHotEncoding(df=imputeddf,numcols=num_cols,catcols=cat_cols)
-    st.dataframe(imputeddf.head())
-
-    
+     
 st.write("3rd Step : visualizing each column and its mathematical summary")   
 
 with st.expander(" Click to show plots"):
@@ -140,12 +133,21 @@ with st.container(border=True):
     st.write(' ')
     hui = totalcols
     hui.remove(target)
+    print("after outlier ", imputeddf.shape)
     # print("hui",type(totalcols))
     nooutlierdf = remove_singlevariate_outliers(df=imputeddf,columns=hui)
+    print("after outlier ", nooutlierdf.shape)
     # print(nooutlierdf.shape)
     # st.write("*********Using Mahalanobis  distance to remove multivariate outliers**********")
     # st.write("Mahalanobis distance is a statistical technique used to identify and remove outliers in multivariate data (data with multiple variables)")
     # st.image("https://miro.medium.com/v2/resize:fit:1400/1*Zj_jFn6SfDPwmasUBCAR1A.png")
+        
+st.write("2nd Step : ONE_HOT_ENCODING")       
+with st.container(border=True):
+    st.write(f"Machine learning algorithms generally work better with numerical input rather than categorical data. One-hot encoding converts categorical variables into a format that can be used by these algorithms.By dropping the first category, we prevent multicollinearity in our model.Using dtype=np.int32 reduces the memory usage")
+    imputeddf = oneHotEncoding(df=nooutlierdf,numcols=num_cols,catcols=cat_cols)
+    st.dataframe(imputeddf.head())       
+        
         
 with st.container(border=True):
     st.subheader("Data Binning",anchor=False)
@@ -173,7 +175,7 @@ with st.container(border=True):
     st.write("*Min-max scaling, also known as min-max normalization, transforms numerical features to a common scale, typically [0, 1]. It rescales features by shifting and scaling values to a specified range, where the minimum value of the feature becomes 0 and the maximum value becomes . Min-max scaling preserves the original distribution and relationships between data points.*") 
     st.text(" ")
     st.write("__Classification Report after Training a Random Forest Model__")   
-    report = getClassificationReport(df=nooutlierdf)
+    report = getClassificationReport(df=nooutlierdf,target=target)
     csv_file = StringIO(report)
     # Convert the string to a DataFrame
     reportdf = pd.read_csv(csv_file)

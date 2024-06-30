@@ -16,8 +16,14 @@ from PIL import Image
 import streamlit as st
 import random
 import string
+from dotenv import load_dotenv
+import os
 
-llm = GoogleGenerativeAI(model="gemini-pro", google_api_key="AIzaSyDdPbghGPeebTv42X8KZhqV09sprkMyQcU",temperature=0.4)
+# Load the environment variables from the .env file
+load_dotenv()
+google = os.getenv('GOOGLEAI')
+
+llm = GoogleGenerativeAI(model="gemini-pro", google_api_key=google,temperature=0.4)
 
 
 def stringrun (code):

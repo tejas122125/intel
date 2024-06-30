@@ -24,7 +24,7 @@ from sklearn.compose import ColumnTransformer
 catimputer = SimpleImputer(strategy='most_frequent')
 numimputer = SimpleImputer(strategy='median')
 
-ohe = OneHotEncoder(drop='first',sparse=False,dtype=np.int32)
+ohe = OneHotEncoder(drop='first',sparse_output=False,dtype=np.int32)
 
 def scatter_plot(df,column1,column2="Diagnosis"):
     fig = px.scatter(
@@ -123,9 +123,19 @@ def oneHotEncoding(df,numcols,catcols):
         if col in numcols:
             newlist.append(col)
             
-    newdf = df.drop(columns = newlist)
-    newdf = ohe.fit_transform(newdf[catcols])
-    return newdf
+    newdf = df
+    
+    allcols = newdf.columns.to_list()        
+    # print(feature_names)
+    # allcol = allcol + feature_names
+    prevdf =  newdf.drop(cat_cols,axis=1)
+    
+    newdf =ohe.fit_transform(newdf[catcols])
+    feature_names = ohe.get_feature_names_out(cat_cols)
+    newdf1 = pd.DataFrame(newdf,columns=feature_names)
+    
+    finaldf = pd.concat([newdf1,prevdf],axis = 1)
+    return finaldf
     
     
 def testcoorelationship(df,cols ,target):
@@ -368,6 +378,7 @@ def remove_singlevariate_outliers(df, columns, lower_percentile=0.01, upper_perc
         # Filter the DataFrame to remove outliers
         # filtered_df = df[(df[column] >= lower_bound) & (df[column] <= upper_bound)]
         # df = filtered_df
+        
     
     return new_df_cap
 
@@ -482,7 +493,7 @@ def getClassificationReport(df,target):
     y_pred = clf.predict(X_test_scaled)
     # print the classification report
     report = classification_report(y_test, y_pred)
-    print(type(report))
+    # print(type(report))
     
     return report
 
