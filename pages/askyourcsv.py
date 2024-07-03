@@ -42,7 +42,8 @@ def generate_random_string(length=4):
 
 
 
-def helpcsv (question,df,imagename):
+def helpcsv (question,dffilename,imagename):
+    df = pd.read_csv(dffilename)
     pythontools = [PythonREPLTool()]
     conversation_with_summary = ConversationChain(
         llm=llm,    
@@ -54,6 +55,7 @@ def helpcsv (question,df,imagename):
     prompt_visualize_csv = PromptTemplate.from_template(
         "you are skillfull csv reader using pandas and pythons tools. GENERATE the necessary python code for the query {question} donot write the string python at the starting assuming name of file is {name} and to save the figure of plot  use the filename as {image} and also give the output in python multiline string format. donot run more than three times  please donot give any error ."
     )
+    # toquery =f'GENERATE the python code for the query {question} assuming name of file is {name} and to save the figure of plot  use the filename as {image}.'
 
 
     
@@ -63,10 +65,15 @@ def helpcsv (question,df,imagename):
         verbose=True,
 
     )
+    
+    
     imagepath = f"csv/{imagename}"
+    name = "csv/test.csv"
+    toquery =f'GENERATE the python code for the query {question} assuming name of file is {name} and to save the figure of plot  use the filename as {imagepath}.'
     try:
-        agent = prompt_visualize_csv  | agent_pandas 
-        response = agent.invoke({"question":question,"name":"test.csv","image":imagepath})
+        # agent = prompt_visualize_csv  | agent_pandas 
+        # response = agent.invoke({"question":question,"name":"test.csv","image":imagepath})
+        response = agent_pandas.invoke(toquery)
         # print (response["output"])
         res = response["output"]
         res =  res.replace("python", "")
@@ -170,7 +177,7 @@ def main():
         st.warning("This Feature of app is a Beta Version So some error might come please do reload the site")
         if 'images' not in st.session_state:
             st.session_state.images = []
-        df = st.session_state.df
+        # df = st.session_state.df
         st.title("Page 1")
   
         if "visualmessages" not in st.session_state:
@@ -180,7 +187,7 @@ def main():
             with st.chat_message(message["role"]):
                 if message['role'] == "assistant":
                     fname = message['content']
-                    img = Image.open(fname)
+                    img = Image.open(fname,mode="r")
                     st.image(img)
                 else:    
                     st.markdown(message["content"])
@@ -193,16 +200,19 @@ def main():
             
             random_str = generate_random_string()
             filename = f"{random_str}.png"
-            
-            check = helpcsv(question=prompt,df=df,imagename=filename)
+            dffilename  = "csv/test.csv"
+            check = helpcsv(question=prompt,dffilename=dffilename,imagename=filename)
+            image = None
+            res = "csv/8aAR.png"
             if check :
                 try :
                     image = Image.open(f'csv/{filename}')
+                    st.session_state.images.append(image)
+                    
                 except :
                     response = "  "    
     
             # Store the image in session state
-                st.session_state.images.append(image)
                 res = f'csv/{filename}'
                 response = "here is your plot"
             else :
