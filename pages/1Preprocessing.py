@@ -41,6 +41,7 @@ def main():
     onehotencodeddf = pd.DataFrame()
     sampleddf = pd.DataFrame()
     scaleddf=pd.DataFrame()
+    edadf = pd.DataFrame()
 
 
     kdf = st.session_state.df
@@ -52,7 +53,6 @@ def main():
 
     # Remove datetime columns
     kdf = kdf.drop(columns=datetime_columns)
-    
     
     # Remove columns with all NaN values
     kdf = kdf.dropna(axis=1, how='all') 
@@ -74,11 +74,20 @@ def main():
         
     kdf.drop(columns=newlist,axis=1,inplace=True)
     
+
     # label encoding the string categorical column 
     label_encoder = LabelEncoder()
+    labelencodedcols =[]
     for column in kdf.columns:
         if kdf[column].dtype == 'object':  # Check if the column is of object type (string)
+            labelencodedcols.append(column)
             kdf[column] = label_encoder.fit_transform(kdf[column])
+            
+     # inversing label encoding for eda analysis
+    for column in labelencodedcols:
+        edadf[column] = label_encoder.inverse_transform(kdf[column])
+    st.session_state.edadf =edadf    
+        
 
 
 
@@ -111,8 +120,10 @@ def main():
                 st.text("After Imputation percentage of null values")
                 st.dataframe(newreport)
             
-                # assigning cleaned dataset to session state for further use
+            # assigning cleaned dataset to session state for further use
             st.session_state.df = kdf
+            
+            
             
             # GETTING THE TOP N FEATURES IN SESSION STATE
             most = testcoorelationship(imputeddf,totalcols,target)

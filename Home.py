@@ -59,31 +59,35 @@ def main():
     )
 
     st.write("# Welcome to InsightMaster👋")
+    tempdf = pd.DataFrame()
+    
+    
+    
+    if 'df' not in st.session_state:
+        st.session_state.df = None
+    if 'filename' not in st.session_state:
+        st.session_state.filename = ''
+    if 'datasetinfo' not in st.session_state:
+        st.session_state.datasetinfo = ''
+    if 'target' not in st.session_state:
+        st.session_state.target = ''
 
-    st.session_state.df = None
-    st.session_state.filename = None
-    st.session_state.columnsinfo = None
-    st.session_state.datasetinfo = None
-    st.session_state.target = None
 
 
-    filename = st.text_input("Enter a name of the dataset")
-
-
-    datasetinfo = st.text_input("Enter a description of the dataset")
-
-    st.session_state.filename = filename
-
-    st.session_state.datasetinfo = datasetinfo
+    st.session_state.filename = st.text_input("Enter a name of the dataset",value=st.session_state.filename)
+    st.session_state.datasetinfo = st.text_input("Enter a description of the dataset",value=st.session_state.datasetinfo)
 
     csv_file  = None
 
     if st.session_state.df is None : 
         csv_file = st.file_uploader("Upload a CSV file", type="csv")
         if csv_file is not None:
-            df1 = pd.read_csv(csv_file)
-            st.session_state.df = df1
-            cols = df1.columns.to_list()
+            tempdf = pd.read_csv(csv_file)
+            with open("csv/test.csv", "wb") as f:
+                f.write(csv_file.getbuffer())
+                
+            # st.session_state.df = df1
+            cols = tempdf.columns.to_list()
             target = st.selectbox("Select target column name",cols)
             st.session_state.target = target
         
@@ -91,13 +95,13 @@ def main():
         
 
     if st.button("SUBMIT"):
-        if filename and datasetinfo and st.session_state.target and csv_file:
+        if  st.session_state.filename  and st.session_state.datasetinfo  and st.session_state.target and csv_file:
             
             if csv_file is not None:
-                df = st.session_state.df
-                st.write("Uploaded CSV file:")
-                with open("csv/test.csv", "wb") as f:
-                    f.write(csv_file.getbuffer())
+                st.session_state.df = tempdf
+                # st.write("Uploaded CSV file:")
+                # with open("csv/test.csv", "wb") as f:
+                #     f.write(csv_file.getbuffer())
                     
                 # st.session_state.df = df
                 

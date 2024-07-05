@@ -31,7 +31,6 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.metrics import classification_report, confusion_matrix, mean_squared_error
 
 
-target = "Weather Type"
 
 
 def load_data():
@@ -39,10 +38,12 @@ def load_data():
 
 
 def main():
+    
+    # INITIAL CONFIGURATION
     kdf = load_data()
     st.write("## Dataset", kdf.head())
     
-    target = st.sidebar.selectbox("Select target variable", kdf.columns)
+    target = st.session_state.target
     if target == None:
         st.warning("Enter the Target Column")
     

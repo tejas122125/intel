@@ -152,31 +152,33 @@ def create_kde_plots(df, columns):
 def main():
     st.title("Exploratory Data Analysis",anchor=False)
     
-        
     # kdf = pd.read_csv("data.csv")
     # target = "Diagnosis"
-    
-    kdf =st.session_state.df
+    kdf = st.session_state.df
+    edadf =st.session_state.edadf
     target = st.session_state.target
+    
 
-
-    datetime_columns = kdf.select_dtypes(include=[pd.DatetimeTZDtype, 'datetime']).columns
-
-    # Remove datetime columns
-    kdf = kdf.drop(columns=datetime_columns)
-
-        # intial configuration
+    # intial configuration
         
         
     cat_cols = [col for col in kdf.columns if kdf[col].nunique() < 10]
     num_cols = [col for col in kdf.columns if col not in cat_cols]
     cat_cols.remove(target)
     totalcols = kdf.columns.tolist()
+    totaledacols = edadf.columns.tolist()
+    
+    for col in totalcols:
+        if col not in totaledacols:
+            edadf[col] = kdf[col]
+    st.dataframe(edadf.head())    
+    
+    
     noofcols = len(totalcols)
 
     # all plots 
     catboxfig = create_boxplots(kdf,cat_cols)        
-    catunifig = create_pie_charts(kdf, cat_cols)
+    catunifig = create_pie_charts(edadf, cat_cols)
     numunifig = create_histograms(kdf,num_cols)
     numkdefig = create_kde_plots(kdf,num_cols)
     numboxfig = create_boxplots(kdf,num_cols)
@@ -270,7 +272,7 @@ def main():
         # topncols = rdf.columns.tolist()
         st.text(' ')
         st.subheader(f"Visualizing Top feature Vs {target} in a Violoin Plot")
-        allfigs = getAllViolinPlots(df=kdf,cols=most,target=target)
+        allfigs = getAllViolinPlots(df=edadf,cols=most,target=target)
         for fig in allfigs:
             st.plotly_chart(fig)                         
             

@@ -34,7 +34,7 @@ api_url = "https://oiffrmbzm4.execute-api.ap-south-1.amazonaws.com/dev/intel"
 overview  ="overview:This dataset contains detailed health information for 1,659 patients diagnosed with Chronic Kidney Disease (CKD).."
 
 
-
+@st.cache_data
 def display_batches(batches):
     for batch in batches:
         col = batch['col']
@@ -62,7 +62,7 @@ async def make_post_request(idxllm1=0,idxllm2=0,dfname="tejaswee",dfinfo=" ",col
             return {"col":col,"response":result['body']['response']}
 
 
-
+# batching queries to be sent to aws lambda
 
 async def batching(cols =[],cols_info ={},dfname="tejaswee",dfinfo=" ",target= " "):
     count = 0
