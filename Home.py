@@ -48,7 +48,7 @@ def upload_to_s3(file, bucket_name, object_name):
     try:
         with open(file,"rb") as cs :
             s3_client.upload_fileobj(cs, bucket_name, object_name)
-            st.success(f"Successfully uploaded {object_name} to {bucket_name}")
+            st.success(f"Successfully uploaded {object_name} to AWS S3")
     except Exception as e:
         st.error(f"Error: {e}")
 
@@ -58,7 +58,7 @@ def main():
         page_icon="👋",
     )
 
-    st.write("# Welcome to Streamlit 👋")
+    st.write("# Welcome to InsightMaster👋")
 
     st.session_state.df = None
     st.session_state.filename = None
@@ -71,7 +71,6 @@ def main():
 
 
     datasetinfo = st.text_input("Enter a description of the dataset")
-    target = st.text_input("ENTER CORRECT NAME OF THE TARGET COLUMN FOR CLASSIFICATION") 
 
     st.session_state.filename = filename
 
@@ -81,23 +80,33 @@ def main():
 
     if st.session_state.df is None : 
         csv_file = st.file_uploader("Upload a CSV file", type="csv")
+        if csv_file is not None:
+            df1 = pd.read_csv(csv_file)
+            st.session_state.df = df1
+            cols = df1.columns.to_list()
+            target = st.selectbox("Select target column name",cols)
+            st.session_state.target = target
+        
+
+        
 
     if st.button("SUBMIT"):
-        if filename and datasetinfo and csv_file:
+        if filename and datasetinfo and st.session_state.target and csv_file:
             
             if csv_file is not None:
-                
-                df = pd.read_csv(csv_file)
+                df = st.session_state.df
                 st.write("Uploaded CSV file:")
                 with open("csv/test.csv", "wb") as f:
                     f.write(csv_file.getbuffer())
                     
-                st.session_state.df = df
+                # st.session_state.df = df
                 
                 bucket_name = "yt-lambda-layer"
                 object_name = st.session_state.filename
                 
                 upload_to_s3("csv/test.csv", bucket_name, object_name)
+                
+                st.info("after submiting the dataset please first go to preprocessing page to clean your dataset for further analysis")
 
             else:
                 st.write("No file uploaded yet.")

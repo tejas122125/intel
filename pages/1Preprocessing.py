@@ -36,10 +36,10 @@ def main():
     scaleddf=pd.DataFrame()
 
 
-    # kdf = st.session_state.df
-    # target = st.session_state.target
-    kdf = pd.read_csv("data.csv")
-    target = "Diagnosis"
+    kdf = st.session_state.df
+    target = st.session_state.target
+    # kdf = pd.read_csv("data.csv")
+    # target = "Diagnosis"
 
     datetime_columns = kdf.select_dtypes(include=[pd.DatetimeTZDtype, 'datetime']).columns
 

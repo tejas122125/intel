@@ -103,17 +103,17 @@ async def batching(cols =[],cols_info ={},dfname="tejaswee",dfinfo=" ",target= "
 async def main():
     st.header("Insight with the help of AI Agents leveraged with the help of AWS S3 and AWS Lambda Service")
     st.text("Please Wait.... It may take a few minutes to generate insights")
-    # df= st.session_state.df
-    # target = st.session_state.target
+    kdf= st.session_state.df
+    target = st.session_state.target
     
-    # filename = st.session_state.filename
-    # datasetinfo = st.session_state.datasetinfo
+    filename = st.session_state.filename
+    datasetinfo = st.session_state.datasetinfo
     
-    filename = "tejaswee"
+    # filename = "tejaswee"
     column_dict = { }
-    datasetinfo = overview
-    kdf = pd.read_csv("data.csv")
-    target = "Diagnosis"
+    # datasetinfo = overview
+    # kdf = pd.read_csv("data.csv")
+    # target = "Diagnosis"
 
     cat_cols = [col for col in kdf.columns if kdf[col].nunique() < 10]
     num_cols = [col for col in kdf.columns if col not in cat_cols]

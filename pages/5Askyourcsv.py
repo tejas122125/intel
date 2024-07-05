@@ -3,26 +3,18 @@ from langchain_experimental.agents import create_pandas_dataframe_agent
 from langchain_experimental.tools import PythonREPLTool
 import pandas as pd
 import os
-from langchain.prompts import PromptTemplate
-from langchain.chains import ConversationChain
-from langchain.memory import ConversationBufferWindowMemory
-from langchain_core.output_parsers import StrOutputParser
 from langchain_google_genai import GoogleGenerativeAI
 from dotenv import load_dotenv
 import os
 import streamlit as st
-import os
 from PIL import Image
-import streamlit as st
 import random
 import string
 from dotenv import load_dotenv
-import os
-
-# Load the environment variables from the .env file
+ 
+# Load the environment variables from the .env file FOR THE GOOGLE AI LLM
 load_dotenv()
 google = os.getenv('GOOGLEAI')
-
 llm = GoogleGenerativeAI(model="gemini-pro", google_api_key=google,temperature=0.4)
 
 
@@ -41,35 +33,27 @@ def generate_random_string(length=4):
     return random_string
 
 
-
-def helpcsv (question,dffilename,imagename):
-    df = pd.read_csv(dffilename)
+# FUNCTION TO HELP VISUALIZE CSV
+def helpcsv (question,imagename):
+    df = st.session_state.df
     pythontools = [PythonREPLTool()]
-    conversation_with_summary = ConversationChain(
-        llm=llm,    
-        memory=ConversationBufferWindowMemory(k=2),
-        verbose=True
-    )
-    filename  = "csv/test.csv"
 
-    prompt_visualize_csv = PromptTemplate.from_template(
-        "you are skillfull csv reader using pandas and pythons tools. GENERATE the necessary python code for the query {question} donot write the string python at the starting assuming name of file is {name} and to save the figure of plot  use the filename as {image} and also give the output in python multiline string format. donot run more than three times  please donot give any error ."
-    )
+    # prompt_visualize_csv = PromptTemplate.from_template(
+    #     "you are skillfull csv reader using pandas and pythons tools. GENERATE the necessary python code for the query {question} donot write the string python at the starting assuming name of file is {name} and to save the figure of plot  use the filename as {image} and also give the output in python multiline string format. donot run more than three times  please donot give any error ."
+    # )
     # toquery =f'GENERATE the python code for the query {question} assuming name of file is {name} and to save the figure of plot  use the filename as {image}.'
 
 
-    
+    # INITIALIZING AGENT PANDAS FROM LANGCHAIN TO GENERATE PLOTS
     agent_pandas = create_pandas_dataframe_agent(
         llm=llm,
         df=df,
         verbose=True,
-
     )
     
-    
     imagepath = f"csv/{imagename}"
-    name = "csv/test.csv"
-    toquery =f'GENERATE the python code for the query {question} assuming name of file is {name} and to save the figure of plot  use the filename as {imagepath}.'
+    
+    toquery =f'GENERATE the python code for the query {question} to save the figure of plot  use the filename as {imagepath}.'
     try:
         # agent = prompt_visualize_csv  | agent_pandas 
         # response = agent.invoke({"question":question,"name":"test.csv","image":imagepath})
@@ -84,31 +68,31 @@ def helpcsv (question,dffilename,imagename):
         return False    
 
 
-
-
-
-def chatcsv(question,filepath):
-    # openaikey = os.environ.get("OPENAI_API_KEY")
-    filename = "kidney.csv"
+# FUNCTION TO HELP QUERY YOUR CSV
+def chatcsv(question):
     pythontools = [PythonREPLTool()]
-    conversation_with_summary = ConversationChain(
-        llm=llm,    
-        memory=ConversationBufferWindowMemory(k=2),
-        verbose=True
-    )
-    query_prompt_template = PromptTemplate.from_template(
-    """you are skillfull csv reader using pandas and pythons tools. So answer the question {question} based on the csv file given.name of the csv file is {filepath}
-    if you need any further information to answer the question please ask 
-    """)
-    df = pd.read_csv(filepath)
+    
+    # query_prompt_template = PromptTemplate.from_template(
+    # """you are skillfull csv reader using pandas and pythons tools. So answer the question {question} based on the csv file given.name of the csv file is {filepath}
+    # if you need any further information to answer the question please ask 
+    # """)
+    
+    
+    # INITIALIZING PANDAS AGENT FROM LANGCHAIN 
+    df = st.session_state.df
+    print(df.head())
+    
     agent_pandas = create_pandas_dataframe_agent(
         llm=llm,
         df=df,
         tool = [pythontools],
         verbose=True,
     )
-    agent = query_prompt_template  | agent_pandas 
-    response = agent.invoke({"question":question,"filepath":filepath})
+    response = agent_pandas.invoke(
+    f"""you are skillfull csv reader using pandas and pythons tools. So answer the question {question} based on the csv file given
+    if you need any further information to answer the question please ask 
+    """)
+
     print (response["output"])
     res = response["output"]
     print(res)
@@ -123,35 +107,17 @@ def main():
     def navigate(page):
         st.session_state.page = page    
         
-    st.set_page_config(page_title="Ask your CSV")
+    st.set_page_config(page_title="Ask Your Dataset")
         
-    st.sidebar.title("Query CSV")
-    st.sidebar.button("Chat With CSV", on_click=navigate, args=("query",))
-    st.sidebar.button("Visualize Your CSV", on_click=navigate, args=("visualize",))    
+    st.sidebar.title("Query Dataset")
+    st.sidebar.button("Chat With Your Dataset", on_click=navigate, args=("query",))
+    st.sidebar.button("Visualize Your Dataset", on_click=navigate, args=("visualize",))    
         
+        
+        # PAGE FOR QUESTIONING YOUR DATASET
     if st.session_state.page == 'query':
         # st.session_state.df = None
-        st.title("Home")
-        st.write("Welcome to the Home page.")
-        st.header("Ask your CSV 📈")
-        # if st.session_state.df is None : 
-        #     csv_file = st.file_uploader("Upload a CSV file", type="csv")
-            
-        #     if csv_file is not None:
-        #         df = pd.read_csv(csv_file)
-        #         st.write("Uploaded CSV file:")
-                
-
-        #         with open("csv/test.csv", "wb") as f:
-        #             f.write(csv_file.getbuffer())
-                
-        #         st.success("File saved successfully as 'uploaded_file.csv'")
-        #         st.session_state.df = df
-        #     else:
-        #         st.write("No file uploaded yet.")
-        
-        
-        
+        st.header("Ask your Ask Your Dataset 📈",anchor=False)        
         if "messages" not in st.session_state:
             st.session_state.messages = []
 
@@ -165,20 +131,20 @@ def main():
             
             st.session_state.messages.append({"role": "user", "content": prompt})
             
-            response = chatcsv(prompt,"csv/test.csv")
+            response = chatcsv(prompt)
 
             response = f"AI: {response}"
             with st.chat_message("assistant"):
                 st.markdown(response)
             st.session_state.messages.append({"role": "assistant", "content": response})
 
-        
+        # PAGE FOR VISUALIZING YOUR DATASETS (BETA VERSION ERROR MAY OCCUR)
     elif st.session_state.page == 'visualize':
         st.warning("This Feature of app is a Beta Version So some error might come please do reload the site")
         if 'images' not in st.session_state:
             st.session_state.images = []
         # df = st.session_state.df
-        st.title("Page 1")
+        st.title("Visualize Dataset",anchor=False)
   
         if "visualmessages" not in st.session_state:
             st.session_state.visualmessages = []
@@ -200,8 +166,7 @@ def main():
             
             random_str = generate_random_string()
             filename = f"{random_str}.png"
-            dffilename  = "csv/test.csv"
-            check = helpcsv(question=prompt,dffilename=dffilename,imagename=filename)
+            check = helpcsv(question=prompt,imagename=filename)
             image = None
             res = "csv/8aAR.png"
             if check :

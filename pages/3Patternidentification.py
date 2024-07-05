@@ -35,8 +35,7 @@ target = "Weather Type"
 
 
 def load_data():
-    # return st.session_state.df
-    return pd.read_csv('weather_classification_data.csv')
+    return st.session_state.df
 
 
 def main():

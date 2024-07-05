@@ -153,11 +153,11 @@ def main():
     st.title("Exploratory Data Analysis",anchor=False)
     
         
-    kdf = pd.read_csv("data.csv")
-    target = "Diagnosis"
+    # kdf = pd.read_csv("data.csv")
+    # target = "Diagnosis"
     
-    # kdf =st.session_state.df
-    # target = st.session_state.target
+    kdf =st.session_state.df
+    target = st.session_state.target
 
 
     datetime_columns = kdf.select_dtypes(include=[pd.DatetimeTZDtype, 'datetime']).columns
@@ -189,7 +189,7 @@ def main():
     with st.expander(" Click to show Univariate analysis of Categorical columns "):
 
         for i,fig in enumerate(catunifig) :
-            if st.button(f"Show box plot of {cat_cols[i]} column"):
+            if st.button(f"Show box plot of {cat_cols[i]} column",type='primary'):
                 st.plotly_chart(catboxfig[i])
             with st.container(border=True):
                 col1,col2 = st.columns([4,3])
@@ -206,7 +206,7 @@ def main():
     with st.expander(" Click to show Univariate Analysis of Numerical Columns "):
 
         for i,fig in enumerate(numunifig) :
-            if st.button(f"Show KDE plot and Box plot for {num_cols[i]}"):
+            if st.button(f"Show KDE plot and Box plot for {num_cols[i]}",type='primary'):
                 col11,col22 = st.columns([1,1])
                 with col11:
                     st.plotly_chart(numkdefig[i])
