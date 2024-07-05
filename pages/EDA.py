@@ -26,24 +26,8 @@ from p import applyimputation,testcoorelationship,getAllViolinPlots,remove_singl
 from p import info,getallcatfig,describe_column,getallconfigs,gettopnfeatures,violin_plot,oversampling,getClassificationReport
 
 
-kdf = pd.read_csv("data.csv")
-target = "Diagnosis"
 
-datetime_columns = kdf.select_dtypes(include=[pd.DatetimeTZDtype, 'datetime']).columns
-
-# Remove datetime columns
-kdf = kdf.drop(columns=datetime_columns)
-
-    
-cat_cols = [col for col in kdf.columns if kdf[col].nunique() < 10]
-num_cols = [col for col in kdf.columns if col not in cat_cols]
-cat_cols.remove(target)
-totalcols = kdf.columns.tolist()
-noofcols = len(totalcols)
-
-
-st.title("Exploratory Data Analysis",anchor=False)
-
+# generating coorelation matrix
 def create_coorelation_matrix(df):
     corr_matrix = df.corr()
 
@@ -65,7 +49,7 @@ def create_coorelation_matrix(df):
     return fig
 
 
-
+# creating pie chart
 def create_pie_charts(df, columns):
     figures = []
     
@@ -78,7 +62,7 @@ def create_pie_charts(df, columns):
     
     return figures
 
-
+# CREATING HISTOGRAMS
 def create_histograms(df, columns):
     figures = []
     
@@ -101,6 +85,8 @@ def create_histograms(df, columns):
     
     return figures
 
+# ANALYZING SKEWNESS OF DATA
+
 def interpret_skewness(skewness):
     if skewness > 0.5:
         return "Strongly Right-skewed"
@@ -112,7 +98,7 @@ def interpret_skewness(skewness):
     else:
         return "Approximately Normally Distributed"
     
-    
+    # CREATING BOX PLOTS
 def create_boxplots(df, columns):
     figures = []
     
@@ -130,6 +116,8 @@ def create_boxplots(df, columns):
             st.warning(f"Column '{column}' not found in DataFrame.")
     
     return figures
+
+# CREATING KDE PLOTS
 
 def create_kde_plots(df, columns):
     figures = []
@@ -159,87 +147,133 @@ def create_kde_plots(df, columns):
     
     return figures
 
+# MAIN FUNCTION OF THIS PAGE
 
-catboxfig = create_boxplots(kdf,cat_cols)        
-catunifig = create_pie_charts(kdf, cat_cols)
-numunifig = create_histograms(kdf,num_cols)
-numkdefig = create_kde_plots(kdf,num_cols)
-numboxfig = create_boxplots(kdf,num_cols)
-
-st.text("Co-relation Matrix of the dataset")
-fig = create_coorelation_matrix(kdf)
-st.plotly_chart(fig)
-
-st.subheader("Uni-Variate Analysis",anchor=False)
-with st.expander(" Click to show Univariate analysis of Categorical columns "):
-
-    for i,fig in enumerate(catunifig) :
-        if st.button(f"Show box plot of {cat_cols[i]} column"):
-            st.plotly_chart(catboxfig[i])
-        with st.container(border=True):
-            col1,col2 = st.columns([4,3])
-            
-            with col1:
-                st.plotly_chart(catunifig[i])
-            with col2:
-                st.write(f"Description of {cat_cols[i]}")
-                des = describe_column(df=kdf,column_name=cat_cols[i])
-                st.dataframe(des)         
+def main():
+    st.title("Exploratory Data Analysis",anchor=False)
+    
+        
+    kdf = pd.read_csv("data.csv")
+    target = "Diagnosis"
+    
+    # kdf =st.session_state.df
+    # target = st.session_state.target
 
 
+    datetime_columns = kdf.select_dtypes(include=[pd.DatetimeTZDtype, 'datetime']).columns
 
-with st.expander(" Click to show Univariate Analysis of Numerical Columns "):
+    # Remove datetime columns
+    kdf = kdf.drop(columns=datetime_columns)
 
-    for i,fig in enumerate(numunifig) :
-        if st.button(f"Show KDE plot and Box plot for {num_cols[i]}"):
-            col11,col22 = st.columns([1,1])
-            with col11:
-                st.plotly_chart(numkdefig[i])
-            with col22:
-                st.plotly_chart(numboxfig[i])    
-            
-        with st.container(border=True):
-            skewness = 0
-            col1,col2 = st.columns([4,3])
-            
-            with col1:
-                st.plotly_chart(numunifig[i])
-            with col2:
-                st.write(f"Description of {num_cols[i]}")
-                des = describe_column(df=kdf,column_name=num_cols[i])
-                skewness = kdf[num_cols[i]].skew()
-                des['Skew'] = skewness
-                st.dataframe(des)   
-            s = interpret_skewness(skewness=skewness)
-            st.info(s)                          
-            
-            
-                        #STARTING BI-VARIATE ANALYSIS WITH RESPECCT TO TARGET
+        # intial configuration
+        
+        
+    cat_cols = [col for col in kdf.columns if kdf[col].nunique() < 10]
+    num_cols = [col for col in kdf.columns if col not in cat_cols]
+    cat_cols.remove(target)
+    totalcols = kdf.columns.tolist()
+    noofcols = len(totalcols)
 
+    # all plots 
+    catboxfig = create_boxplots(kdf,cat_cols)        
+    catunifig = create_pie_charts(kdf, cat_cols)
+    numunifig = create_histograms(kdf,num_cols)
+    numkdefig = create_kde_plots(kdf,num_cols)
+    numboxfig = create_boxplots(kdf,num_cols)
 
-st.subheader("Bi-Variate Analysis",anchor=False)
+    st.text("Co-relation Matrix of the dataset")
+    fig = create_coorelation_matrix(kdf)
+    st.plotly_chart(fig)
 
+    st.subheader("Uni-Variate Analysis",anchor=False)
+    with st.expander(" Click to show Univariate analysis of Categorical columns "):
 
-with st.expander(" Click to Bi-variate analysis of Categorical Columns "):
-    catfigures = getallcatfig(kdf,cat_cols=cat_cols,target=target)
-
-    for i,fig in enumerate(catfigures) :
-        with st.container(border=True):
-            st.plotly_chart(catfigures[i])
-  
-
-
-configs = getallconfigs(df=kdf,num_cols=num_cols,target=target)
-
-with st.expander(" Click to show Bi-variate analysis of Numerical Columns "):
-    for i,fig in enumerate(configs) :
-        with st.container(border=True):
-            col1,col2 = st.columns([4,3])
-
-            st.plotly_chart(fig)
-     
+        for i,fig in enumerate(catunifig) :
+            if st.button(f"Show box plot of {cat_cols[i]} column"):
+                st.plotly_chart(catboxfig[i])
+            with st.container(border=True):
+                col1,col2 = st.columns([4,3])
                 
+                with col1:
+                    st.plotly_chart(catunifig[i])
+                with col2:
+                    st.write(f"Description of {cat_cols[i]}")
+                    des = describe_column(df=kdf,column_name=cat_cols[i])
+                    st.dataframe(des)         
 
-                         
+# UNIVARIATE ANALYSIS
+
+    with st.expander(" Click to show Univariate Analysis of Numerical Columns "):
+
+        for i,fig in enumerate(numunifig) :
+            if st.button(f"Show KDE plot and Box plot for {num_cols[i]}"):
+                col11,col22 = st.columns([1,1])
+                with col11:
+                    st.plotly_chart(numkdefig[i])
+                with col22:
+                    st.plotly_chart(numboxfig[i])    
+                
+            with st.container(border=True):
+                skewness = 0
+                col1,col2 = st.columns([4,3])
+                
+                with col1:
+                    st.plotly_chart(numunifig[i])
+                with col2:
+                    st.write(f"Description of {num_cols[i]}")
+                    des = describe_column(df=kdf,column_name=num_cols[i])
+                    skewness = kdf[num_cols[i]].skew()
+                    des['Skew'] = skewness
+                    st.dataframe(des)   
+                s = interpret_skewness(skewness=skewness)
+                st.info(s)                          
+                
+                
+                            #STARTING BI-VARIATE ANALYSIS WITH RESPECCT TO TARGET
+
+
+    st.subheader("Bi-Variate Analysis",anchor=False)
+
+
+    with st.expander(" Click to Bi-variate analysis of Categorical Columns "):
+        catfigures = getallcatfig(kdf,cat_cols=cat_cols,target=target)
+
+        for i,fig in enumerate(catfigures) :
+            with st.container(border=True):
+                st.plotly_chart(catfigures[i])
+    
+
+
+    configs = getallconfigs(df=kdf,num_cols=num_cols,target=target)
+
+    with st.expander(" Click to show Bi-variate analysis of Numerical Columns "):
+        for i,fig in enumerate(configs) :
+            with st.container(border=True):
+                col1,col2 = st.columns([4,3])
+
+                st.plotly_chart(fig)
+        
+                    
+# GETTING THE TOP N FEATURES USING VARIOUS METHODS
+    with  st.container(border=True):
+        st.subheader(f"Get most significant features from the dataframe with respect to label {target} using chi-squared, pearson-correlation and T-test  ",anchor=False)
+        # topn = int(noofcols/3)
+        st.write("") 
+        most = testcoorelationship(kdf,totalcols,target)
+        most.remove(target)
+        st.session_state.topnfeatures =  most
+        st.write("Most Significant features are  :",most)
+        # rdf = gettopnfeatures(n=topn,df= kdf,target=target) 
+        # rdf.drop([0],inplace=True)
+        # rdf = rdf.head(topn)
+        # st.dataframe(data=rdf,height=500)
+        # topncols = rdf.columns.tolist()
+        st.text(' ')
+        st.subheader(f"Visualizing Top feature Vs {target} in a Violoin Plot")
+        allfigs = getAllViolinPlots(df=kdf,cols=most,target=target)
+        for fig in allfigs:
+            st.plotly_chart(fig)                         
             
-            
+        
+if __name__ == "__main__":
+    main()               

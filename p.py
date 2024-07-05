@@ -116,7 +116,7 @@ def info(df):
 
 
 def oneHotEncoding(df,numcols,catcols):
-    # Identify string columns
+    # Identify string columns in which are not required
     string_columns = df.select_dtypes(include=['object']).columns.tolist()
     newlist = []
     for col in  string_columns:
@@ -129,6 +129,8 @@ def oneHotEncoding(df,numcols,catcols):
     # print(feature_names)
     # allcol = allcol + feature_names
     prevdf =  newdf.drop(cat_cols,axis=1)
+    #  removing unrequired string columns from dataset
+    prevdf = prevdf.drop(newlist,axis =1)
     
     newdf =ohe.fit_transform(newdf[catcols])
     feature_names = ohe.get_feature_names_out(cat_cols)
@@ -137,7 +139,7 @@ def oneHotEncoding(df,numcols,catcols):
     finaldf = pd.concat([newdf1,prevdf],axis = 1)
     return finaldf
     
-    
+    #FUNCTION RETURNING TOP N  FEATURES WITH RESPECT TO TARGET COLUMN  USING VARIOUS TEST SCORES 
 def testcoorelationship(df,cols ,target):
     mostsignificant = []
     for x in cols:
@@ -175,26 +177,49 @@ num_cols = [col for col in kdf.columns if col not in cat_cols]
 cat_cols.remove("Diagnosis")
 
 
-xlabel_ca =  {
-    "Gender": "Gender(0: Male, 1: Female)",
-    "Ethnicity": "Ethnicity(0: Caucasian, 1: African American, 2: Asian, 3: Other)",
-    "EducationLevel": "EducationLevel(0: None, 1: High School, 2: Bachelor's, 3: Higher)",
-    "Smoking": "Smoking(0: No, 1: Yes)",
-    "FamilyHistoryKidneyDisease": "FamilyHistoryKidneyDisease(0: No, 1: Yes)",
-    "FamilyHistoryHypertension": "FamilyHistoryHypertension(0: No, 1: Yes)",
-    "FamilyHistoryDiabetes": "FamilyHistoryDiabetes(0: No, 1: Yes)",
-    "PreviousAcuteKidneyInjury": "PreviousAcuteKidneyInjury(0: No, 1: Yes)",
-    "UrinaryTractInfections": "UrinaryTractInfections(0: No, 1: Yes)",
-    "ACEInhibitors": "ACEInhibitors(0: No, 1: Yes)",
-    "Diuretics": "Diuretics(0: No, 1: Yes)",
-    "Statins": "Statins(0: No, 1: Yes)",
-    "AntidiabeticMedications": "AntidiabeticMedications(0: No, 1: Yes)",
-    "Edema": "Edema(0: No, 1: Yes)",
-    "HeavyMetalsExposure": "HeavyMetalsExposure(0: No, 1: Yes)",
-    "SocioeconomicStatus": "SocioeconomicStatus(0: Low, 1: Middle, 2: High)",
-    "OccupationalExposureChemicals": "OccupationalExposureChemicals(0: No, 1: Yes)",
-    "WaterQuality": "WaterQuality(0: Good, 1: Poor)"
-}
+# xlabel_ca =  {
+#     "Gender": "Gender(0: Male, 1: Female)",
+#     "Ethnicity": "Ethnicity(0: Caucasian, 1: African American, 2: Asian, 3: Other)",
+#     "EducationLevel": "EducationLevel(0: None, 1: High School, 2: Bachelor's, 3: Higher)",
+#     "Smoking": "Smoking(0: No, 1: Yes)",
+#     "FamilyHistoryKidneyDisease": "FamilyHistoryKidneyDisease(0: No, 1: Yes)",
+#     "FamilyHistoryHypertension": "FamilyHistoryHypertension(0: No, 1: Yes)",
+#     "FamilyHistoryDiabetes": "FamilyHistoryDiabetes(0: No, 1: Yes)",
+#     "PreviousAcuteKidneyInjury": "PreviousAcuteKidneyInjury(0: No, 1: Yes)",
+#     "UrinaryTractInfections": "UrinaryTractInfections(0: No, 1: Yes)",
+#     "ACEInhibitors": "ACEInhibitors(0: No, 1: Yes)",
+#     "Diuretics": "Diuretics(0: No, 1: Yes)",
+#     "Statins": "Statins(0: No, 1: Yes)",
+#     "AntidiabeticMedications": "AntidiabeticMedications(0: No, 1: Yes)",
+#     "Edema": "Edema(0: No, 1: Yes)",
+#     "HeavyMetalsExposure": "HeavyMetalsExposure(0: No, 1: Yes)",
+#     "SocioeconomicStatus": "SocioeconomicStatus(0: Low, 1: Middle, 2: High)",
+#     "OccupationalExposureChemicals": "OccupationalExposureChemicals(0: No, 1: Yes)",
+#     "WaterQuality": "WaterQuality(0: Good, 1: Poor)"
+# }
+# PARSING THE COLUMNS INFORMATION INTO A DICTIONARY
+# def parse_column_descriptions(input_string):
+#     # Split the input string by periods to get individual column descriptions
+#     single_line_string = ' '.join(line.strip() for line in input_string.splitlines())
+#     descriptions = single_line_string.split('. ')
+#     # print(len(descriptions))
+#     # Initialize an empty dictionary to store the results
+#     result = {}
+    
+#     # Iterate over the descriptions
+#     for description in descriptions:
+#         # Split each description by the first occurrence of ': ' to separate the column name from its description
+#         parts = description.split(': ', 1)
+#         if len(parts) == 2:  # Ensure there are exactly two parts
+#             column_name = parts[0].strip()
+#             column_description = parts[1].strip()
+#             # Add the column name and description to the dictionary
+#             result[column_name] = column_description
+    
+#     return result
+
+
+
 
 paperbgcolor  = '#372694'
 plotbgcolor = "#372694"
@@ -225,7 +250,7 @@ def plot_percentage_stacked_bar_plotly(df, feature, label):
     layout = go.Layout(
         barmode='stack',
         title=f'<b>Percentage Stacked Bar Chart for {feature}</b>',
-        xaxis=dict(title=f'<b>{xlabel_ca[feature]}</b>',linewidth=2,color = 'white',gridcolor= '#F8F2B7'),
+        xaxis=dict(title=f'<b>{feature}</b>',linewidth=2,color = 'white',gridcolor= '#F8F2B7'),
         yaxis=dict(title=f'<b>Percentage</b>',linewidth=2,color = 'white',gridcolor = '#F8F2B7'),
         legend=dict(title=f'<b>{label}</b>'),   
         paper_bgcolor=paperbgcolor , 
@@ -271,6 +296,7 @@ def describe_column(df, column_name):
 
 
 # Define custom colors
+# DRAWING HISTOGRAM OF ALL COLUMNS VS TARGET COLUMN
 def continuousdata(df,column_name,target):
   color_discrete_map = {0: '#267E0A', 1: '#A31010'}
   
@@ -303,15 +329,15 @@ def continuousdata(df,column_name,target):
   )
   return fig
 
-
+# RETURNING THE PLOTTED FIGURES
 def getallconfigs(df,num_cols,target):
     numfigs = []
     for col in num_cols:
         numfigs.append(continuousdata(df,col,target))
     return numfigs    
-  # Show figure
-  # fig.show()
+
   
+#   GETTING THE TOP N FEATURES FOR THE DATASET WITH RESPECT TO TARGET COLUMN
 def gettopnfeatures(n,df,target):
 #  obtaining top 20  related features
     corr_matrix =df.corr()
@@ -353,8 +379,9 @@ def gettopnfeatures(n,df,target):
 # )
 #     return fig
 
-def remove_singlevariate_outliers(df, columns, lower_percentile=0.01, upper_percentile=0.75):
 
+# FUNCTION TO REMOVE SINGLE VARIATE OUTLIER USING IQR METHODS
+def remove_singlevariate_outliers(df, columns, lower_percentile=0.01, upper_percentile=0.75):
 
     for column in columns:
 
@@ -375,14 +402,10 @@ def remove_singlevariate_outliers(df, columns, lower_percentile=0.01, upper_perc
                 new_df_cap[column]
             )
         )
-        # Filter the DataFrame to remove outliers
-        # filtered_df = df[(df[column] >= lower_bound) & (df[column] <= upper_bound)]
-        # df = filtered_df
         
-    
     return new_df_cap
 
-
+# FUNCTION TO REMOVE MULTIVARIATE OUTLIER USING MAHALANOBIS DISTANCE METHOD (NOT USED)
 # mahalanobis outlier removal
 # Compute Mahalanobis distance
 def multivariate_outlier_removal(orignal = None,x=None, data=None, cov=None):
@@ -403,6 +426,8 @@ def multivariate_outlier_removal(orignal = None,x=None, data=None, cov=None):
     new_df = new_df.drop('mahala',axis=1)
     return new_df
     
+    
+   # REMOVING ALL KIND OF OUTLIER USING ABOVE TWO METHODS 
 def remove_all_outlier(df,singlevariate = ['Age','BMI'],col_for_multivariate_outlier = ['MedicationAdherence','HealthLiteracy','AlcoholConsumption','PhysicalActivity'] ):
   
     fildf = remove_singlevariate_outliers(df,singlevariate)
@@ -412,42 +437,37 @@ def remove_all_outlier(df,singlevariate = ['Age','BMI'],col_for_multivariate_out
     new_df.shape
     return new_df
                    
-# new_df = remove_all_outlier(kdf)
+# FUNCTION FOR DATABINING (NOT USED)
+
+# def databining(col,cut_points,labels = None):
+#     minval = col.min()
+#     maxval = col.max()
+#     break_points =[ minval]+cut_points+[maxval]
+#     break_points.sort()
+#     if not labels :
+#         labels = range(len(cut_points)+1)
+#     colBin = pd.cut(col,bins = break_points,labels=labels,include_lowest=True)
+#     return colBin    
+
+
+# # bindf = new_df.copy()
+# # cut_points = [18,40]
+# # labels = ['Teenage','Adult','Senior']
+# # bindf['age_category'] = databining(col=bindf['Age'],cut_points=cut_points,labels=labels)
+# # bindf1 = bindf.drop('Age',axis=1)
 
 
 
-def databining(col,cut_points,labels = None):
-    minval = col.min()
-    maxval = col.max()
-    break_points =[ minval]+cut_points+[maxval]
-    break_points.sort()
-    if not labels :
-        labels = range(len(cut_points)+1)
-    colBin = pd.cut(col,bins = break_points,labels=labels,include_lowest=True)
-    return colBin    
-
-
-# bindf = new_df.copy()
-# cut_points = [18,40]
-# labels = ['Teenage','Adult','Senior']
-# bindf['age_category'] = databining(col=bindf['Age'],cut_points=cut_points,labels=labels)
-# bindf1 = bindf.drop('Age',axis=1)
-
-
+# Apply SMOTE to the feature and target datasets
 def oversampling(df,target = 'Diagnosis'):
     X = df.drop(target, axis=1)
     y = df[target]
 # Initialize SMOTE
     smote = SMOTE(random_state=42)
-
-    # Apply SMOTE to the feature and target datasets
     X_resampled, y_resampled = smote.fit_resample(X, y)
-
     # Combine the resampled features and target into a DataFrame
     df_resampled = pd.DataFrame(X_resampled, columns=X.columns)
     df_resampled[target] = y_resampled
-    
-
     print("Original DataFrame:")
     print(df.shape)
     print("\nResampled DataFrame:")
@@ -456,47 +476,43 @@ def oversampling(df,target = 'Diagnosis'):
 
 
 
-
+# Here's a function that takes a DataFrame and returns a scaled DataFrame using Min-Max scaling:
 
 def minmaxscaling(df,target = 'Diagnosis'):
     
     scaler = MinMaxScaler()
+    
     x = df.drop(target, axis=1)
+    xcols = x.columns
     y = df[target]
-    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
-    # print(X_train.shape)
-    # X_train_cat = X_train[cat_cols]
-    # X_test_cat = X_test[cat_cols]
-    
-    # X_train = X_train.drop(cat_cols, axis =1)
-    # X_test = X_test.drop(cat_cols,axis = 1)
-    
-    scaler.fit(X_train)
-    X_train_scaled = scaler.transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
-    
-    X_train_scaled  = pd.DataFrame(X_train_scaled,columns = X_train.columns)
-    X_test_scaled = pd.DataFrame(X_test_scaled,columns=X_test.columns)
-    # print(X_train_scaled.shape,X_train_cat.shape)
-    
-    # X_train_scaled_n = pd.concat([X_train_scaled,X_train_cat],axis=1)
-    # X_test_scaled_n = pd.concat([X_test_scaled,X_test_cat],axis=1)
-    return X_train_scaled,X_test_scaled,y_train,y_test
+    x_scaled = scaler.fit_transform(x)
+    x_scaleddf = pd.DataFrame(x_scaled,columns=xcols)
+    x_scaleddf[target] = y
+    finaldf = x_scaleddf
+    return finaldf
+
     
 def getClassificationReport(df,target):    
     
     # df_resamp = oversampling(df,target)
-    # print(df_resamp[target].value_counts())    
-    X_train_scaled,X_test_scaled,y_train,y_test = minmaxscaling(df,target=target)    
+    # print(df_resamp[target].value_counts())  
+    df_scaled = minmaxscaling(df,target=target) 
+    x = df.drop(target, axis=1)
+    y = df[target]
+    
+    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+       
     clf = RandomForestClassifier(n_estimators=100, random_state=42)
-    clf.fit(X_train_scaled, y_train)
-    y_pred = clf.predict(X_test_scaled)
+    clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_test)
     # print the classification report
     report = classification_report(y_test, y_pred)
     # print(type(report))
     
-    return report
+    return report,df_scaled
 
+
+# FUNCTION FOR IMPUTING NUMERICAL COLUMNS
 def imputingcat_num(df,zero,cat,num):
     allcol = df.columns.to_list()
     transformer = ColumnTransformer(transformers=[
@@ -508,7 +524,7 @@ def imputingcat_num(df,zero,cat,num):
     return df_final
     
 
-
+# FUNCTION FOR IMPUTING CATEGORICAL COLUMNS
 def categorize_columns_by_null(df):
     cat_cols = [col for col in df.columns if df[col].nunique() < 10]
     num_cols = [col for col in df.columns if col not in cat_cols]
