@@ -41,41 +41,25 @@ def main():
     
     # INITIAL CONFIGURATION
     kdf = load_data()
-    st.write("## Dataset", kdf.head())
+    tempdf = kdf
+    st.write("## Dataset", tempdf.head())
     
     target = st.session_state.target
     if target == None:
         st.warning("Enter the Target Column")
     
-    cat_cols = [col for col in kdf.columns if kdf[col].nunique() < 10]
-    num_cols = [col for col in kdf.columns if col not in cat_cols]
+    cat_cols = [col for col in tempdf.columns if tempdf[col].nunique() < 10]
+    num_cols = [col for col in tempdf.columns if col not in cat_cols]
     cat_cols.remove(target)
     
     huicols = cat_cols + num_cols
-    totalcols = kdf.columns.tolist()
+    totalcols = tempdf.columns.tolist()
     noofcols = len(totalcols)
     
-    
-    label_encoder = LabelEncoder()
-
-    string_columns = kdf.select_dtypes(include=['object']).columns.tolist()
-    newlist = []
-
-    for col in  string_columns:
-        if col in num_cols:
-            newlist.append(col)
-        
-    kdf.drop(columns=newlist,axis=1,inplace=True)
-
-    for column in kdf.columns:
-        if kdf[column].dtype == 'object':  # Check if the column is of object type (string)
-            kdf[column] = label_encoder.fit_transform(kdf[column])
-
-
     # print(kdf.head())
 
-    X = kdf.drop(columns=[target])
-    y = kdf[target]
+    X = tempdf.drop(columns=[target])
+    y = tempdf[target]
 
     if y.dtype == 'object':
         le = LabelEncoder()
@@ -104,13 +88,13 @@ def main():
         
         kmeans = KMeans(n_clusters=n_clusters)
         kmeans.fit(X_scaled)
-        kdf['Cluster'] = kmeans.labels_
+        tempdf['Cluster'] = kmeans.labels_
         
         st.write("## K-Means Clustering")
         # st.write()
         st.write("### Cluster Centers", kmeans.cluster_centers_)
         
-        fig = px.scatter(kdf, x=kdf[x_feature], y=kdf[y_feature], color='Cluster', color_continuous_scale='Viridis', title="Scatter Plot with Clusters")
+        fig = px.scatter(tempdf, x=tempdf[x_feature], y=tempdf[y_feature], color='Cluster', color_continuous_scale='Viridis', title="Scatter Plot with Clusters")
         st.plotly_chart(fig)
         
         
@@ -131,12 +115,12 @@ def main():
         min_samples = st.sidebar.slider("Min Samples", 1, 10, 5)
         
         dbscan = DBSCAN(eps=eps, min_samples=min_samples)
-        kdf['Cluster'] = dbscan.fit_predict(X_scaled)
+        tempdf['Cluster'] = dbscan.fit_predict(X_scaled)
         
         st.write("## DBSCAN Clustering")
-        st.write(kdf)
+        st.write(tempdf)
         
-        fig = px.scatter(kdf, x=kdf[x_feature], y=kdf[y_feature], color='Cluster', color_continuous_scale='Viridis', title="Scatter Plot with Clusters")
+        fig = px.scatter(tempdf, x=tempdf[x_feature], y=tempdf[y_feature], color='Cluster', color_continuous_scale='Viridis', title="Scatter Plot with Clusters")
         st.plotly_chart(fig)
         
         
