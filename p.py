@@ -21,6 +21,12 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+
+
+
+
+
 catimputer = SimpleImputer(strategy='most_frequent')
 numimputer = SimpleImputer(strategy='median')
 
@@ -128,12 +134,12 @@ def oneHotEncoding(df,numcols,catcols):
     allcols = newdf.columns.to_list()        
     # print(feature_names)
     # allcol = allcol + feature_names
-    prevdf =  newdf.drop(cat_cols,axis=1)
+    prevdf =  newdf.drop(catcols,axis=1)
     #  removing unrequired string columns from dataset
     prevdf = prevdf.drop(newlist,axis =1)
     
     newdf =ohe.fit_transform(newdf[catcols])
-    feature_names = ohe.get_feature_names_out(cat_cols)
+    feature_names = ohe.get_feature_names_out(catcols)
     newdf1 = pd.DataFrame(newdf,columns=feature_names)
     
     finaldf = pd.concat([newdf1,prevdf],axis = 1)
@@ -169,12 +175,12 @@ def testcoorelationship(df,cols ,target):
     
     
     
-kdf = pd.read_csv('kidney.csv')
-kdf.drop(columns = ['PatientID', 'DoctorInCharge'], inplace = True)
-cat_cols = [col for col in kdf.columns if kdf[col].nunique() < 6]
-num_cols = [col for col in kdf.columns if col not in cat_cols]
+# kdf = pd.read_csv('kidney.csv')
+# kdf.drop(columns = ['PatientID', 'DoctorInCharge'], inplace = True)
+# cat_cols = [col for col in kdf.columns if kdf[col].nunique() < 6]
+# num_cols = [col for col in kdf.columns if col not in cat_cols]
 
-cat_cols.remove("Diagnosis")
+# cat_cols.remove("Diagnosis")
 
 
 # xlabel_ca =  {
@@ -485,6 +491,10 @@ def minmaxscaling(df,target = 'Diagnosis'):
     x = df.drop(target, axis=1)
     xcols = x.columns
     y = df[target]
+    if y.dtype == 'object':
+        le = LabelEncoder()
+        y = le.fit_transform(y)
+        
     x_scaled = scaler.fit_transform(x)
     x_scaleddf = pd.DataFrame(x_scaled,columns=xcols)
     x_scaleddf[target] = y

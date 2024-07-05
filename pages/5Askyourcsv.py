@@ -168,7 +168,7 @@ def main():
             filename = f"{random_str}.png"
             check = helpcsv(question=prompt,imagename=filename)
             image = None
-            res = "csv/8aAR.png"
+            res = "csv/fun.png"
             if check :
                 try :
                     image = Image.open(f'csv/{filename}')
