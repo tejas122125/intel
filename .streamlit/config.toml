@@ -1,0 +1,6 @@
+[theme]
+primaryColor = "#1f77b4"  # A shade of blue for primary elements
+backgroundColor = "#0E1117"  # Dark background color
+secondaryBackgroundColor = "#262730"  # Slightly lighter dark color for secondary elements
+textColor = "#FAFAFA"  # Light color for text
+font = "monospace"  # Font type

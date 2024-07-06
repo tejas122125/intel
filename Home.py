@@ -110,7 +110,7 @@ def main():
                 
                 upload_to_s3("csv/test.csv", bucket_name, object_name)
                 
-                st.info("after submiting the dataset please first go to preprocessing page to clean your dataset for further analysis")
+                st.info("After submiting the dataset please first go to preprocessing page to clean your dataset for further analysis")
 
             else:
                 st.write("No file uploaded yet.")

@@ -102,95 +102,102 @@ def chatcsv(question):
 
 
 def main():
-    if 'page' not in st.session_state:
-        st.session_state.page = 'query'
-    def navigate(page):
-        st.session_state.page = page    
-        
-    st.set_page_config(page_title="Ask Your Dataset")
-        
-    st.sidebar.title("Query Dataset")
-    st.sidebar.button("Chat With Your Dataset", on_click=navigate, args=("query",))
-    st.sidebar.button("Visualize Your Dataset", on_click=navigate, args=("visualize",))    
-        
-        
-        # PAGE FOR QUESTIONING YOUR DATASET
-    if st.session_state.page == 'query':
-        # st.session_state.df = None
-        st.header("Ask your Ask Your Dataset 📈",anchor=False)        
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
-
-        for message in st.session_state.messages:
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
-
-        # React to user input
-        if prompt := st.chat_input("What is up?"):
-            st.chat_message("user").markdown(prompt)
-            
-            st.session_state.messages.append({"role": "user", "content": prompt})
-            
-            response = chatcsv(prompt)
-
-            response = f"AI: {response}"
-            with st.chat_message("assistant"):
-                st.markdown(response)
-            st.session_state.messages.append({"role": "assistant", "content": response})
-
-        # PAGE FOR VISUALIZING YOUR DATASETS (BETA VERSION ERROR MAY OCCUR)
-    elif st.session_state.page == 'visualize':
-        st.warning("This Feature of app is a Beta Version So some error might come please do reload the site")
-        if 'images' not in st.session_state:
-            st.session_state.images = []
-        # df = st.session_state.df
-        st.title("Visualize Dataset",anchor=False)
-  
-        if "visualmessages" not in st.session_state:
-            st.session_state.visualmessages = []
-
-        for message in st.session_state.visualmessages:
-            with st.chat_message(message["role"]):
-                if message['role'] == "assistant":
-                    fname = message['content']
-                    img = Image.open(fname,mode="r")
-                    st.image(img)
-                else:    
-                    st.markdown(message["content"])
-                
-
-#         # React to user input
-        if prompt := st.chat_input("What is up?"):
-            st.chat_message("user").markdown(prompt)
-            st.session_state.visualmessages.append({"role": "user", "content": prompt})
-            
-            random_str = generate_random_string()
-            filename = f"{random_str}.png"
-            check = helpcsv(question=prompt,imagename=filename)
-            image = None
-            res = "csv/fun.png"
-            if check :
-                try :
-                    image = Image.open(f'csv/{filename}')
-                    st.session_state.images.append(image)
-                    
-                except :
-                    response = "  "    
     
-            # Store the image in session state
-                res = f'csv/{filename}'
-                response = "here is your plot"
-            else :
-                response = "some error occured"
+    
+    st.title("Ask Your Dataset 📈",anchor=False)        
+    st.sidebar.title("Query Dataset")
+    
+    if st.session_state.df is not None:
+        # check for query or visualize page
+        if 'page' not in st.session_state:
+            st.session_state.page = 'query'
+        def navigate(page):
+            st.session_state.page = page    
+            
 
-            # response = f"AI: {response}"
-            with st.chat_message("assistant"):
-                if check:
-                    st.image(image)
+        st.sidebar.button("Chat With Your Dataset", on_click=navigate, args=("query",))
+        st.sidebar.button("Visualize Your Dataset", on_click=navigate, args=("visualize",))    
+            
+            
+            # PAGE FOR QUESTIONING YOUR DATASET
+        if st.session_state.page == 'query':
+            # st.session_state.df = None
+            if "messages" not in st.session_state:
+                st.session_state.messages = []
+
+            for message in st.session_state.messages:
+                with st.chat_message(message["role"]):
+                    st.markdown(message["content"])
+
+            # React to user input
+            if prompt := st.chat_input("What is up?"):
+                st.chat_message("user").markdown(prompt)
+                
+                st.session_state.messages.append({"role": "user", "content": prompt})
+                
+                response = chatcsv(prompt)
+
+                response = f"AI: {response}"
+                with st.chat_message("assistant"):
                     st.markdown(response)
-                else:
-                    st.markdown(response)    
-            st.session_state.visualmessages.append({"role": "assistant", "content": res})           
+                st.session_state.messages.append({"role": "assistant", "content": response})
+
+            # PAGE FOR VISUALIZING YOUR DATASETS (BETA VERSION ERROR MAY OCCUR)
+        elif st.session_state.page == 'visualize':
+            st.warning("This Feature of app is a Beta Version So some error might come please do reload the site")
+            if 'images' not in st.session_state:
+                st.session_state.images = []
+            # df = st.session_state.df
+    
+            if "visualmessages" not in st.session_state:
+                st.session_state.visualmessages = []
+
+            for message in st.session_state.visualmessages:
+                with st.chat_message(message["role"]):
+                    if message['role'] == "assistant":
+                        fname = message['content']
+                        img = Image.open(fname,mode="r")
+                        st.image(img)
+                    else:    
+                        st.markdown(message["content"])
+                    
+
+    #         # React to user input
+            if prompt := st.chat_input("What is up?"):
+                st.chat_message("user").markdown(prompt)
+                st.session_state.visualmessages.append({"role": "user", "content": prompt})
+                
+                random_str = generate_random_string()
+                filename = f"{random_str}.png"
+                check = helpcsv(question=prompt,imagename=filename)
+                image = None
+                res = "csv/fun.png"
+                if check :
+                    try :
+                        image = Image.open(f'csv/{filename}')
+                        st.session_state.images.append(image)
+                        
+                    except :
+                        response = "  "    
+        
+                # Store the image in session state
+                    res = f'csv/{filename}'
+                    response = "here is your plot"
+                else :
+                    response = "some error occured"
+
+                # response = f"AI: {response}"
+                with st.chat_message("assistant"):
+                    if check:
+                        st.image(image)
+                        st.markdown(response)
+                    else:
+                        st.markdown(response)    
+                st.session_state.visualmessages.append({"role": "assistant", "content": res})           
+    else:
+        st.warning("PLEASE UPLOAD YOUR DATASET FIRST")            
+
+
 
 if __name__ == "__main__":
     main()
