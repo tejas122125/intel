@@ -14,7 +14,8 @@ from dotenv import load_dotenv
  
 # Load the environment variables from the .env file FOR THE GOOGLE AI LLM
 load_dotenv()
-google = os.getenv('GOOGLEAI')
+# google = os.getenv('GOOGLEAI')
+google = st.secrets["GOOGLEAI"]
 llm = GoogleGenerativeAI(model="gemini-pro", google_api_key=google,temperature=0.4)
 
 

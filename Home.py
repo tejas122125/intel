@@ -15,8 +15,11 @@ import os
 
 # LOADING AWS KEYS AND INITIALIZING BOTO3 TO CONNECT WITH AWS
 load_dotenv()
-awsaccesskeyid = os.getenv('AWSACCESSKEYID')
-awssecretkeyid = os.getenv('AWSSECRETKEYID')
+# awsaccesskeyid = os.getenv('AWSACCESSKEYID')
+# awssecretkeyid = os.getenv('AWSSECRETKEYID')
+
+awsaccesskeyid = st.secrets["AWSACCESSKEYID"]
+awssecretkeyid = st.secrets["AWSSECRETKEYID"]
 
 s3_client = boto3.client(
     's3',
