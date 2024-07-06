@@ -148,29 +148,31 @@ def oneHotEncoding(df,numcols,catcols):
     #FUNCTION RETURNING TOP N  FEATURES WITH RESPECT TO TARGET COLUMN  USING VARIOUS TEST SCORES 
 def testcoorelationship(df,cols ,target):
     mostsignificant = []
+    totalcols = df.columns.tolist()
     for x in cols:
-        x_unique = df[x].nunique()
-        y_unique = df[target].nunique()
-        p_value = 0
+        if x in totalcols:
+            x_unique = df[x].nunique()
+            y_unique = df[target].nunique()
+            p_value = 0
 
-        if x_unique > 5 & y_unique >5:
-            # print("using pearson coorelation")
-            p_value = pearson_coorelation(df,x,target)
-        elif x_unique < 5 & y_unique < 5:
-            # print("using chisquared test")
-            p_value = chi_square_test(df,x,target)
-        elif x_unique >5 & y_unique < 5:
-            # print("using t test")
-            p_value = t_test(df,x,target)
-            
-        else:
-            print("using coorelation")
-            p_value = pearson_coorelation(df,x,target)    
+            if x_unique > 5 & y_unique >5:
+                # print("using pearson coorelation")
+                p_value = pearson_coorelation(df,x,target)
+            elif x_unique < 5 & y_unique < 5:
+                # print("using chisquared test")
+                p_value = chi_square_test(df,x,target)
+            elif x_unique >5 & y_unique < 5:
+                # print("using t test")
+                p_value = t_test(df,x,target)
+                
+            else:
+                print("using coorelation")
+                p_value = pearson_coorelation(df,x,target)    
 
-        if p_value < 0.06:
-            # print("There is a significant relationship between age and diagnosis (p < 0.05).")
-            # testresult = f"There is a significant relationship between {x} and {y} ({p_value} < 0.05)."
-            mostsignificant.append(x)
+            if p_value < 0.06:
+                # print("There is a significant relationship between age and diagnosis (p < 0.05).")
+                # testresult = f"There is a significant relationship between {x} and {y} ({p_value} < 0.05)."
+                mostsignificant.append(x)
     return mostsignificant    
     
     
