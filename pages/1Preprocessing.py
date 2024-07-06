@@ -63,7 +63,8 @@ def main():
         edadf = pd.DataFrame()
 
 
-        kdf = st.session_state.df
+        kdf = st.session_state.df.copy()
+        edadf = st.session_state.df.copy()
         target = st.session_state.target
 
         # kdf = pd.read_csv("data.csv")
@@ -72,6 +73,8 @@ def main():
         
         # Remove columns with all NaN values
         kdf = kdf.dropna(axis=1, how='all') 
+        edadf = edadf.dropna(axis=1, how='all') 
+        
         
         cat_cols = [col for col in kdf.columns if kdf[col].nunique() < 10]
         num_cols = [col for col in kdf.columns if col not in cat_cols]
@@ -90,6 +93,8 @@ def main():
                 newlist.append(col)
             
         kdf.drop(columns=newlist,axis=1,inplace=True)
+        edadf.drop(columns=newlist,axis=1,inplace=True)
+        
         
 
         # label encoding the string categorical column 
@@ -100,9 +105,9 @@ def main():
                 labelencodedcols.append(column)
                 kdf[column] = label_encoder.fit_transform(kdf[column])
                 
-        # inversing label encoding for eda analysis
-        for column in labelencodedcols:
-            edadf[column] = label_encoder.inverse_transform(kdf[column])
+        # # inversing label encoding for eda analysis
+        # for column in labelencodedcols:
+        #     edadf[column] = label_encoder.inverse_transform(kdf[column])
         st.session_state.edadf =edadf    
             
 
