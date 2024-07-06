@@ -240,7 +240,8 @@ def plot_percentage_stacked_bar_plotly(df, feature, label):
     # print(percentages)
     # Create traces for each diagnosis label
     traces = []
-    colors = ['green', 'red']
+    colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
+          "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]
     for diagnosis3,color in zip(percentages.columns,colors):
         traces.append(go.Bar(
             x=percentages.index,
@@ -273,7 +274,7 @@ def plot_percentage_stacked_bar_plotly(df, feature, label):
     # fig.show()
 
 # Plot percentage stacked bar charts for each categorical feature
-def getallcatfig(df,cat_cols,target = "Diagnosis"):
+def getallcatfig(df,cat_cols,target):
     allcategoriesfigures  =[] 
     for feature in cat_cols:
         fig =  plot_percentage_stacked_bar_plotly(df, feature, target)
@@ -306,7 +307,8 @@ def describe_column(df, column_name):
 def continuousdata(df,column_name,target):
   color_discrete_map = {0: '#267E0A', 1: '#A31010'}
   
-
+  colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
+          "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]
   # Create the Plotly histogram with KDE
   fig = px.histogram( 
       df,
@@ -314,7 +316,7 @@ def continuousdata(df,column_name,target):
       color=target,
       nbins=10,
       opacity=0.85,
-      color_discrete_map=color_discrete_map,
+    #   color_discrete_map=color_discrete_map,
       title=f'{column_name} Distribution by {target}',
   )
 
@@ -465,7 +467,7 @@ def remove_all_outlier(df,singlevariate = ['Age','BMI'],col_for_multivariate_out
 
 
 # Apply SMOTE to the feature and target datasets
-def oversampling(df,target = 'Diagnosis'):
+def oversampling(df,target):
     X = df.drop(target, axis=1)
     y = df[target]
 # Initialize SMOTE
@@ -484,7 +486,7 @@ def oversampling(df,target = 'Diagnosis'):
 
 # Here's a function that takes a DataFrame and returns a scaled DataFrame using Min-Max scaling:
 
-def minmaxscaling(df,target = 'Diagnosis'):
+def minmaxscaling(df,target):
     
     scaler = MinMaxScaler()
     

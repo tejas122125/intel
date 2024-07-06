@@ -49,6 +49,7 @@ def helpcsv (question,imagename):
         llm=llm,
         df=df,
         verbose=True,
+        allow_dangerous_code=True
     )
     
     imagepath = f"csv/{imagename}"
@@ -87,6 +88,7 @@ def chatcsv(question):
         df=df,
         tool = [pythontools],
         verbose=True,
+        allow_dangerous_code=True
     )
     response = agent_pandas.invoke(
     f"""you are skillfull csv reader using pandas and pythons tools. So answer the question {question} based on the csv file given

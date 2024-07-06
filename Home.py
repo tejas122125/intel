@@ -88,8 +88,8 @@ def main():
                 
             # st.session_state.df = df1
             cols = tempdf.columns.to_list()
-            target = st.selectbox("Select target column name",cols)
-            st.session_state.target = target
+            st.session_state.target  = st.selectbox("Select target column name",cols)
+            print("hello",st.session_state.target)
         
 
         

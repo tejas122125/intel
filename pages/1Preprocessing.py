@@ -35,20 +35,13 @@ from sklearn.metrics import classification_report, confusion_matrix, mean_square
 
 
 def main():
-    st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-    body {
-        font-family: 'Roboto', sans-serif;
-    }
-    </style>
-    """, unsafe_allow_html=True)
     
     st.title("Pre-Processing Page 🧮",anchor=False)
     
     
     if st.session_state.df is not None :
+        
         
         quote = "Without data you are another person with an opnion"
         author = "W.Edward's Duming"
@@ -72,20 +65,18 @@ def main():
 
         kdf = st.session_state.df
         target = st.session_state.target
+
         # kdf = pd.read_csv("data.csv")
         # target = "Diagnosis"
 
-        datetime_columns = kdf.select_dtypes(include=[pd.DatetimeTZDtype, 'datetime']).columns
-
-        # Remove datetime columns
-        kdf = kdf.drop(columns=datetime_columns)
         
         # Remove columns with all NaN values
         kdf = kdf.dropna(axis=1, how='all') 
-        # imputing all missing values in every columns
         
         cat_cols = [col for col in kdf.columns if kdf[col].nunique() < 10]
         num_cols = [col for col in kdf.columns if col not in cat_cols]
+        print("monuuu",target)
+        print(kdf.columns)
         cat_cols.remove(target)
         totalcols = kdf.columns.tolist()
         noofcols = len(totalcols)

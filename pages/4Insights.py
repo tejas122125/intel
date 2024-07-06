@@ -10,6 +10,9 @@ import requests
 import asyncio
 import json
 import aiohttp
+
+
+
 # aws lambda endpoint
 api_url = "https://oiffrmbzm4.execute-api.ap-south-1.amazonaws.com/dev/intel"  
 

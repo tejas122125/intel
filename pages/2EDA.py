@@ -6,24 +6,12 @@ import streamlit as st
 import plotly.express as px # type: ignore
 import pandas as pd
 import numpy as np
-from scipy.stats import chi2_contingency
-from scipy.stats import pearsonr
 import seaborn as sns
 import matplotlib.pyplot as plt
-from scipy.stats import ttest_ind
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
-import scipy.optimize
-from imblearn.over_sampling import SMOTE
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-from p import applyimputation,testcoorelationship,getAllViolinPlots,remove_singlevariate_outliers,oneHotEncoding
-from p import info,getallcatfig,describe_column,getallconfigs,gettopnfeatures,violin_plot,oversampling,getClassificationReport
+
+from p import testcoorelationship,getAllViolinPlots
+from p import getallcatfig,describe_column,getallconfigs
 
 
 
@@ -88,11 +76,11 @@ def create_histograms(df, columns):
 # ANALYZING SKEWNESS OF DATA
 
 def interpret_skewness(skewness):
-    if skewness > 0.5:
+    if skewness < 0.5:
         return "Strongly Right-skewed"
     elif skewness > -0.1 and skewness < 0.1:
         return "Approximately Normally Distributed"
-    elif skewness < -0.5:
+    elif skewness > -0.5:
         return "Strongly Left-skewed"
 
     else:

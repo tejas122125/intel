@@ -1,40 +1,14 @@
 import streamlit as st
 import graphviz as gv
 from io import StringIO
-import streamlit as st
 import plotly.express as px # type: ignore
-from scipy.stats import chi2_contingency
-from scipy.stats import pearsonr
-from scipy.stats import ttest_ind
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
-import scipy.optimize
-from imblearn.over_sampling import SMOTE
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-from p import applyimputation,testcoorelationship,getAllViolinPlots,remove_singlevariate_outliers,oneHotEncoding
-from p import info,getallcatfig,describe_column,getallconfigs,gettopnfeatures,violin_plot,oversampling,getClassificationReport
-import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.cluster import KMeans, DBSCAN
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.svm import SVC
-from sklearn.linear_model import LogisticRegression, LinearRegression
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, LabelEncoder
-from sklearn.metrics import classification_report, confusion_matrix, mean_squared_error
-
-
-
-
-def load_data():
-    return st.session_state.df
 
 
 def main():
@@ -42,7 +16,8 @@ def main():
     
     if st.session_state.df is not None:
         # INITIAL CONFIGURATION
-        kdf = load_data()
+        kdf = st.session_state.df
+
         tempdf = kdf
         st.write("## Dataset", tempdf.head())
         
