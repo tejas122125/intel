@@ -80,7 +80,12 @@ def main():
         num_cols = [col for col in kdf.columns if col not in cat_cols]
         print("monuuu",target)
         print(kdf.columns)
-        cat_cols.remove(target)
+        
+        # separating target columns from categorical columns
+        if target in cat_cols:
+            cat_cols.remove(target)
+            
+            
         totalcols = kdf.columns.tolist()
         noofcols = len(totalcols)
         
