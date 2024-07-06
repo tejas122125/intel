@@ -78,16 +78,11 @@ def main():
         
         cat_cols = [col for col in kdf.columns if kdf[col].nunique() < 10]
         num_cols = [col for col in kdf.columns if col not in cat_cols]
-        print("monuuu",target)
-        print(kdf.columns)
-        
+
         # separating target columns from categorical columns
         if target in cat_cols:
             cat_cols.remove(target)
             
-            
-        totalcols = kdf.columns.tolist()
-        noofcols = len(totalcols)
         
         # RENMOVING UNNECESSARY STRING TYPE COLUMN FROM NUMERICAL COLUMNS
         string_columns = kdf.select_dtypes(include=['object']).columns.tolist()
@@ -100,14 +95,15 @@ def main():
         kdf.drop(columns=newlist,axis=1,inplace=True)
         edadf.drop(columns=newlist,axis=1,inplace=True)
         
+        totalcols = kdf.columns.tolist()
+        noofcols = len(totalcols)
+        
         
 
         # label encoding the string categorical column 
         label_encoder = LabelEncoder()
-        labelencodedcols =[]
         for column in kdf.columns:
             if kdf[column].dtype == 'object':  # Check if the column is of object type (string)
-                labelencodedcols.append(column)
                 kdf[column] = label_encoder.fit_transform(kdf[column])
                 
         # # inversing label encoding for eda analysis
@@ -115,10 +111,6 @@ def main():
         #     edadf[column] = label_encoder.inverse_transform(kdf[column])
         st.session_state.edadf =edadf    
             
-
-
-
-
 
         if target in totalcols:
             st.text("Scroll to bottom to download the pre-processed dataset")
