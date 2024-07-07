@@ -136,7 +136,8 @@ def main():
                 
                 # GETTING THE TOP N FEATURES IN SESSION STATE
                 most = testcoorelationship(imputeddf,totalcols,target)
-                most.remove(target)
+                if target in most :
+                    most.remove(target)
                 st.session_state.topnfeatures =  most
                 
                 
