@@ -205,53 +205,57 @@ def main():
                 
                 
             # Separate features and target variable
-            X = scaleddf.drop(columns=[target])
-            y = scaleddf[target]    
-            
-                # Sidebar for algorithm selection
-            st.sidebar.header("Choose Classifier")
-            classifier_name = st.sidebar.selectbox("Select Classifier", ("Logistic Regression", "Decision Tree", "Random Forest"))
+            totalscaledcols = scaleddf.columns.tolist()
+            if target in totalscaledcols:
+                X = scaleddf.drop(columns=[target])
+                y = scaleddf[target]    
+                
+                    # Sidebar for algorithm selection
+                st.sidebar.header("Choose Classifier")
+                classifier_name = st.sidebar.selectbox("Select Classifier", ("Logistic Regression", "Decision Tree", "Random Forest"))
 
-            # Sidebar for classifier parameters
-            def add_parameter_ui(clf_name):
-                params = dict()
-                if clf_name == "Logistic Regression":
-                    params["C"] = st.sidebar.slider("C (Regularization parameter)", 0.01, 10.0)
-                elif clf_name == "Decision Tree":
-                    params["max_depth"] = st.sidebar.slider("Max Depth", 1, 20)
-                    params["min_samples_split"] = st.sidebar.slider("Min Samples Split", 2, 20)
-                elif clf_name == "Random Forest":
-                    params["n_estimators"] = st.sidebar.slider("Number of Estimators", 10, 500,100)
-                    params["max_depth"] = st.sidebar.slider("Max Depth", 1, 20)
-                    params["min_samples_split"] = st.sidebar.slider("Min Samples Split", 2, 20)
-                return params
+                # Sidebar for classifier parameters
+                def add_parameter_ui(clf_name):
+                    params = dict()
+                    if clf_name == "Logistic Regression":
+                        params["C"] = st.sidebar.slider("C (Regularization parameter)", 0.01, 10.0)
+                    elif clf_name == "Decision Tree":
+                        params["max_depth"] = st.sidebar.slider("Max Depth", 1, 20)
+                        params["min_samples_split"] = st.sidebar.slider("Min Samples Split", 2, 20)
+                    elif clf_name == "Random Forest":
+                        params["n_estimators"] = st.sidebar.slider("Number of Estimators", 10, 500,100)
+                        params["max_depth"] = st.sidebar.slider("Max Depth", 1, 20)
+                        params["min_samples_split"] = st.sidebar.slider("Min Samples Split", 2, 20)
+                    return params
 
-            params = add_parameter_ui(classifier_name)
-            
-            X = scaleddf.drop(columns=[target])
-            y = scaleddf[target]
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+                params = add_parameter_ui(classifier_name)
+                
+                X = scaleddf.drop(columns=[target])
+                y = scaleddf[target]
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-            # option to choose from the three classifier
-            def get_classifier(clf_name, params):
-                if clf_name == "Logistic Regression":
-                    clf = LogisticRegression(C=params["C"])
-                elif clf_name == "Decision Tree":
-                    clf = DecisionTreeClassifier(max_depth=params["max_depth"], min_samples_split=params["min_samples_split"])
-                elif clf_name == "Random Forest":
-                    clf = RandomForestClassifier(n_estimators=params["n_estimators"], max_depth=params["max_depth"], min_samples_split=params["min_samples_split"])
-                return clf
+                # option to choose from the three classifier
+                def get_classifier(clf_name, params):
+                    if clf_name == "Logistic Regression":
+                        clf = LogisticRegression(C=params["C"])
+                    elif clf_name == "Decision Tree":
+                        clf = DecisionTreeClassifier(max_depth=params["max_depth"], min_samples_split=params["min_samples_split"])
+                    elif clf_name == "Random Forest":
+                        clf = RandomForestClassifier(n_estimators=params["n_estimators"], max_depth=params["max_depth"], min_samples_split=params["min_samples_split"])
+                    return clf
 
-            clf = get_classifier(classifier_name, params)
-            clf.fit(X_train, y_train)
-            y_pred = clf.predict(X_test)
+                clf = get_classifier(classifier_name, params)
+                clf.fit(X_train, y_train)
+                y_pred = clf.predict(X_test)
 
-            # Display classification report
-            st.text(" ")
-            st.write("# Choose your classifier and set the parameters.")
-            st.write(f"## Classification Report for {classifier_name}")
-            report = classification_report(y_test, y_pred, output_dict=True)
-            st.write(pd.DataFrame(report).transpose())
+                # Display classification report
+                st.text(" ")
+                st.write("# Choose your classifier and set the parameters.")
+                st.write(f"## Classification Report for {classifier_name}")
+                report = classification_report(y_test, y_pred, output_dict=True)
+                st.write(pd.DataFrame(report).transpose())
+            else : 
+                st.warning('PLEASE CHECK THAT YOU HAVE ENTERED CORRECT TARGET COLUMN')    
 
             st.text( "  ")
             if  not scaleddf.empty:
