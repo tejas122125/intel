@@ -75,14 +75,10 @@ def main():
         kdf = kdf.dropna(axis=1, how='all') 
         edadf = edadf.dropna(axis=1, how='all') 
         
-        
         cat_cols = [col for col in kdf.columns if kdf[col].nunique() < 10]
         num_cols = [col for col in kdf.columns if col not in cat_cols]
 
-        # separating target columns from categorical columns
-        if target in cat_cols:
-            cat_cols.remove(target)
-            
+
         
         # RENMOVING UNNECESSARY STRING TYPE COLUMN FROM NUMERICAL COLUMNS
         string_columns = kdf.select_dtypes(include=['object']).columns.tolist()
@@ -95,6 +91,10 @@ def main():
         kdf.drop(columns=newlist,axis=1,inplace=True)
         edadf.drop(columns=newlist,axis=1,inplace=True)
         
+        
+        # separating target columns from categorical columns
+        if target in cat_cols:
+            cat_cols.remove(target)
         totalcols = kdf.columns.tolist()
         noofcols = len(totalcols)
         
@@ -117,7 +117,7 @@ def main():
             # imputation of dataset
             with st.container(border=True):
                 st.write(f"1st basic step involves understanding the features of data and to impute any NULL values. Here to impute any categorical column we have used *simple imputer with most frequent strategy* and impute numerical data we have used *simple imputer with median strategy*")
-                st.write(np.round(kdf.describe(),1),height=400)
+                st.write(np.round(kdf.describe(),1))
         
                 imputeddf,oldreport,newreport = applyimputation(df=kdf)
                 st.text(" ")
