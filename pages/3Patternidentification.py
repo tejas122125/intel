@@ -27,7 +27,8 @@ def main():
         
         cat_cols = [col for col in tempdf.columns if tempdf[col].nunique() < 10]
         num_cols = [col for col in tempdf.columns if col not in cat_cols]
-        cat_cols.remove(target)
+        if target in cat_cols:
+            cat_cols.remove(target)
         
         huicols = cat_cols + num_cols
         totalcols = tempdf.columns.tolist()

@@ -151,7 +151,8 @@ def main():
                 st.image("https://miro.medium.com/v2/resize:fit:1400/1*ZrRgmtVHMVLknr7BmezXlg.jpeg")
                 st.write(' ')
                 hui = totalcols
-                hui.remove(target)
+                if target in hui:
+                    hui.remove(target)
                 print("after outlier ", imputeddf.shape)
                 # print("hui",type(totalcols))
                 nooutlierdf = remove_singlevariate_outliers(df=imputeddf,columns=hui)

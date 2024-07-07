@@ -155,7 +155,10 @@ def main():
             
         cat_cols = [col for col in kdf.columns if kdf[col].nunique() < 10]
         num_cols = [col for col in kdf.columns if col not in cat_cols]
-        cat_cols.remove(target)
+        
+        if target in cat_cols:
+            cat_cols.remove(target)
+        
         totalcols = kdf.columns.tolist()
         totaledacols = edadf.columns.tolist()
         
@@ -252,9 +255,10 @@ def main():
             st.subheader(f"Get most significant features from the dataframe with respect to label {target} using chi-squared, pearson-correlation and T-test  ",anchor=False)
             # topn = int(noofcols/3)
             st.write("") 
-            most = testcoorelationship(kdf,totalcols,target)
-            most.remove(target)
-            st.session_state.topnfeatures =  most
+            # most = testcoorelationship(kdf,totalcols,target)
+            # most.remove(target)
+            # st.session_state.topnfeatures =  most
+            most = st.session_state.topnfeatures.copy()
             st.write("Most Significant features are  :",most)
             # rdf = gettopnfeatures(n=topn,df= kdf,target=target) 
             # rdf.drop([0],inplace=True)

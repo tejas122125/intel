@@ -140,10 +140,13 @@ async def main():
         # datasetinfo = overview
         # kdf = pd.read_csv("data.csv")
         # target = "Diagnosis"
+        
+        # INITIAL CONFIGURATIONS
 
         cat_cols = [col for col in kdf.columns if kdf[col].nunique() < 10]
         num_cols = [col for col in kdf.columns if col not in cat_cols]
-        cat_cols.remove(target)
+        if target in cat_cols:
+            cat_cols.remove(target)
         totalcols = kdf.columns.tolist()
         noofcols = len(totalcols)
         
