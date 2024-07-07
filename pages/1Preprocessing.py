@@ -203,7 +203,7 @@ def main():
 
                 
                 
-                
+            # CHECK IF AT  ANYTIME TARGET COLUMN GETS REMOVED    
             # Separate features and target variable
             totalscaledcols = scaleddf.columns.tolist()
             if target in totalscaledcols:
