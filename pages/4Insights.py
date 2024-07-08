@@ -21,6 +21,7 @@ api_url = "https://oiffrmbzm4.execute-api.ap-south-1.amazonaws.com/dev/intel"
 errorstring1 = " Agent stopped due to iteration limit or time limit."
 errorstring2  = "Missing: everything | Show results with"
 errorstring3 = "..."
+errorstring4 = "the candidat e.safety_ratings to determine if the response was blocked."
 
 # function to display container with result
 def display_batches(batches):
@@ -31,6 +32,8 @@ def display_batches(batches):
         res = res.replace(errorstring1," ")
         res = res.replace(errorstring2," ")
         res = res.replace(errorstring3," ")
+        res = res.replace(errorstring4," ")
+        
         
         wrapped_text = textwrap.fill(res, width=linewidth)
         with st.container(border=True):
@@ -48,6 +51,8 @@ def displaycachedresult(batches):
         res = res.replace(errorstring1," ")
         res = res.replace(errorstring2," ")
         res = res.replace(errorstring3," ")
+        res = res.replace(errorstring4," ")
+        
         
         wrapped_text = textwrap.fill(res, width=linewidth)
         with st.container(border=True):

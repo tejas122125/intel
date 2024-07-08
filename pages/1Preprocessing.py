@@ -134,12 +134,21 @@ def main():
                 
                 
                 
-                # GETTING THE TOP N FEATURES IN SESSION STATE
+                # GETTING THE TOP N FEATURES IN SESSION STATE OR IF LENGTH OF FEATURES ARE LESS THAN 15 THEN GET INSIGHTS FOR ALL COLUMNS (DONE TO REDUCE COMPUTAIONAL EXPENSE OF CALCULATING UNREQUIRED FEATURES)
                 most = testcoorelationship(imputeddf,totalcols,target)
-                if target in most :
-                    most.remove(target)
-                st.session_state.topnfeatures =  most
-                
+                if len(most) > 15:
+                    if target in most :
+                        most.remove(target)
+                    st.session_state.topnfeatures =  most
+                else:
+                    totcols = kdf.columns.tolist()
+                    if target in totcols :
+                        totcols.remove(target)
+                    st.session_state.topnfeatures =  totcols    
+                    
+                    
+                #for debugging purpose 
+                # st.write(st.session_state.topnfeatures)     
                 
                 # using iqr method to remove outlier
             st.subheader("2nd Step : To remove both single variate and multi-variate outliers from the data-frame")

@@ -15,11 +15,11 @@ import os
 
 # LOADING AWS KEYS AND INITIALIZING BOTO3 TO CONNECT WITH AWS
 load_dotenv()
-# awsaccesskeyid = os.getenv('AWSACCESSKEYID')
-# awssecretkeyid = os.getenv('AWSSECRETKEYID')
+awsaccesskeyid = os.getenv('AWSACCESSKEYID')
+awssecretkeyid = os.getenv('AWSSECRETKEYID')
 
-awsaccesskeyid = st.secrets["AWSACCESSKEYID"]
-awssecretkeyid = st.secrets["AWSSECRETKEYID"]
+# awsaccesskeyid = st.secrets["AWSACCESSKEYID"]
+# awssecretkeyid = st.secrets["AWSSECRETKEYID"]
 
 s3_client = boto3.client(
     's3',
@@ -86,12 +86,14 @@ def main():
         csv_file = st.file_uploader("Upload a CSV file", type="csv")
         if csv_file is not None:
             tempdf = pd.read_csv(csv_file)
+            # saving the file so to be uploaded to aws s3 proper format
             with open("csv/test.csv", "wb") as f:
                 f.write(csv_file.getbuffer())
                 
             # st.session_state.df = df1
-            cols = tempdf.columns.to_list()
-            st.session_state.target  = st.selectbox("Select target column name",cols)
+            cat_cols = [col for col in tempdf.columns if tempdf[col].nunique() < 10]
+
+            st.session_state.target  = st.selectbox("Select categorical target column name",cat_cols)
             print("hello",st.session_state.target)
         
 
