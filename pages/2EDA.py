@@ -76,11 +76,9 @@ def create_histograms(df, columns):
 # ANALYZING SKEWNESS OF DATA
 
 def interpret_skewness(skewness):
-    if skewness < 0.5:
+    if skewness > 0.35:
         return "Strongly Right-skewed"
-    elif skewness > -0.1 and skewness < 0.1:
-        return "Approximately Normally Distributed"
-    elif skewness > -0.5:
+    elif skewness < -0.35:
         return "Strongly Left-skewed"
 
     else:

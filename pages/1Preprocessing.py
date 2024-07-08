@@ -89,7 +89,18 @@ def main():
                 newlist.append(col)
             
         kdf.drop(columns=newlist,axis=1,inplace=True)
-        edadf.drop(columns=newlist,axis=1,inplace=True)
+        # RENMOVING UNNECESSARY STRING TYPE COLUMN FROM NUMERICAL COLUMNS FOR EDA DF
+        string_columns = edadf.select_dtypes(include=['object']).columns.tolist()
+        edalist = []
+
+        for col in  string_columns:
+            if col in num_cols:
+                edalist.append(col)
+            
+        edadf.drop(columns=edalist,axis=1,inplace=True)
+        # setting the sesssion state for the eda df
+        st.session_state.edadf =edadf    
+        
         
         
         # separating target columns from categorical columns
@@ -109,7 +120,6 @@ def main():
         # # inversing label encoding for eda analysis
         # for column in labelencodedcols:
         #     edadf[column] = label_encoder.inverse_transform(kdf[column])
-        st.session_state.edadf =edadf    
             
 
         if target in totalcols:
