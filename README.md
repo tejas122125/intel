@@ -94,6 +94,9 @@ Contributions are welcome! Please follow these steps to contribute:
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
+## Project Report
+For a detailed overview of the project, please refer to our [Project Report](https://github.com/tejas122125/intel/blob/main/Intel_updated.pdf)
+
 ## Acknowledgments
 We would like to thank the developers and contributors of the various open-source libraries and tools used in this project. Special thanks to the Streamlit community for their continuous support and innovation.
 
