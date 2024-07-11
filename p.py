@@ -565,6 +565,7 @@ def categorize_columns_by_null(df):
     return zero, nonzerocat,nonzeronum
 
 
+# HELPER FUNCTION FOR APPLYING IMPUTATION
 def applyimputation(df):
     zero,nonzerocat,nonzeronum = categorize_columns_by_null(df=df)
     print(nonzeronum)
