@@ -13,6 +13,7 @@ import os
 
 
 
+# LOADING AWS KEYS AND INITIALIZING BOTO3 TO CONNECT WITH AWS
 load_dotenv()
 # awsaccesskeyid = os.getenv('AWSACCESSKEYID')
 # awssecretkeyid = os.getenv('AWSSECRETKEYID')

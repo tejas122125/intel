@@ -284,6 +284,8 @@ def getallcatfig(df,cat_cols,target):
     return allcategoriesfigures   
    
    
+#    USED TO DESCRIBE COLUMNS  IN DATAFRAME
+   
 def describe_column(df, column_name):
     
     """
