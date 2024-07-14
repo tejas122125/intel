@@ -67,7 +67,7 @@ In the age of big data, the ability to efficiently represent and extract insight
 
 5. **Run the Streamlit App:**
    ```bash
-   streamlit run app.py
+   streamlit run Home.py
    ```
 
 ## Usage
