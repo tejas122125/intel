@@ -5,7 +5,7 @@ Welcome to the Knowledge Representation and Insight Generation project! This pro
 **Project Website:** [Insight Masters](https://insightmasters.streamlit.app/)
 
 ## Project Report
-For a detailed overview of the project, please refer to our [Project Report](https://github.com/tejas122125/intel/blob/main/Intel_updated.pdf)
+For a detailed overview of the project, please refer to our [Project Report](https://github.com/tejas122125/intel/blob/main/Knowledge_Generation.pdf)
 
 ## Table of Contents
 - [Introduction](#introduction)
