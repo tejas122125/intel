@@ -63,7 +63,9 @@ def create_histograms(df, columns):
                 title=dict(x=0.5),
                 xaxis_title=column,
                 yaxis_title='Count',
-                bargap=0.1,         # Gap between bars of adjacent location coordinates
+                bargap=0.1,         # Gap between bars of adjacent location 
+
+                
                 bargroupgap=0  ,
             )
             # fig.show()
